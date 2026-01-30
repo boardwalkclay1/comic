@@ -181,3 +181,187 @@
   --panel-border: var(--villain-outline);
   --shadow: var(--shadow-strong-dark);
 }
+/* ================================
+   BACKGROUNDS
+   ================================ */
+
+body {
+  background-color: var(--bg);
+  background-image:
+    url("../backgrounds/halftone.png"),
+    url("../backgrounds/hero-bg.png");
+  background-size: 300px 300px, cover;
+  background-blend-mode: multiply;
+  color: var(--text);
+  font-family: var(--font-main);
+  margin: 0;
+  padding: 0;
+}
+
+:root[data-theme="villain"] body {
+  background-image:
+    url("../backgrounds/speedlines.png"),
+    url("../backgrounds/villain-bg.png");
+  background-blend-mode: screen;
+}
+/* ================================
+   COMIC PANEL STYLE
+   ================================ */
+
+.comic-panel,
+.feature-panel,
+.credit-panel,
+.audio-card,
+.comic-card {
+  border: 4px solid var(--panel-border);
+  background: var(--bg-alt);
+  box-shadow: var(--shadow);
+  padding: 1rem;
+  border-radius: 6px;
+  transition: transform 0.2s ease;
+}
+
+.comic-card:hover,
+.feature-panel:hover {
+  transform: translateY(-6px);
+}
+/* ================================
+   SPEECH BUBBLE
+   ================================ */
+
+.speech-bubble {
+  position: relative;
+  background: var(--bg-alt);
+  border: 4px solid var(--panel-border);
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  border-radius: 12px;
+}
+
+.speech-bubble::after {
+  content: "";
+  position: absolute;
+  bottom: -20px;
+  left: 40px;
+  border-width: 20px 20px 0;
+  border-style: solid;
+  border-color: var(--bg-alt) transparent transparent;
+}
+/* ================================
+   LIBRARY GRID
+   ================================ */
+
+.comic-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.comic-card__cover {
+  height: 200px;
+  background-size: cover;
+  background-position: center;
+  border: 3px solid var(--panel-border);
+  box-shadow: var(--shadow);
+}
+
+/* Example placeholder covers */
+.cover-comic-1 { background-image: url("../backgrounds/cover1.png"); }
+.cover-comic-2 { background-image: url("../backgrounds/cover2.png"); }
+.cover-book-1  { background-image: url("../backgrounds/bookcover1.png"); }
+/* ================================
+   READER PAGE
+   ================================ */
+
+.book-frame {
+  position: relative;
+  width: min(90vw, 900px);
+  height: min(70vh, 600px);
+  margin: 0 auto;
+  background: white;
+  border: 6px solid var(--panel-border);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.book-frame--comic {
+  border-radius: 4px;
+}
+
+.book-frame--book {
+  border-radius: 0;
+  border-style: double;
+}
+/* ================================
+   PAGE TURN ANIMATION
+   ================================ */
+
+.book-frame.turn-left {
+  animation: turnLeft 0.35s ease;
+}
+
+.book-frame.turn-right {
+  animation: turnRight 0.35s ease;
+}
+
+@keyframes turnLeft {
+  0% { transform: perspective(1200px) rotateY(0deg); }
+  100% { transform: perspective(1200px) rotateY(-10deg); }
+}
+
+@keyframes turnRight {
+  0% { transform: perspective(1200px) rotateY(0deg); }
+  100% { transform: perspective(1200px) rotateY(10deg); }
+}
+/* ================================
+   AUDIO CARDS
+   ================================ */
+
+.audio-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.audio-card {
+  border: 4px solid var(--panel-border);
+  background: var(--bg-alt);
+  padding: 1rem;
+  box-shadow: var(--shadow);
+  border-radius: 6px;
+}
+
+.audio-player {
+  width: 100%;
+  margin-top: 1rem;
+}
+/* ================================
+   SCENE SYSTEM
+   ================================ */
+
+.scene-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.scene {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(1.05);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scene--active {
+  opacity: 1;
+  pointer-events: auto;
+  transform: scale(1);
+}
