@@ -518,3 +518,28 @@ a {
     height: 220px;
   }
 }
+.book-frame.turn-left {
+  animation: turnLeft 0.35s ease;
+}
+
+.book-frame.turn-right {
+  animation: turnRight 0.35s ease;
+}
+
+@keyframes turnLeft {
+  0% {
+    transform: perspective(1200px) rotateY(0deg);
+  }
+  100% {
+    transform: perspective(1200px) rotateY(-8deg);
+  }
+}
+
+@keyframes turnRight {
+  0% {
+    transform: perspective(1200px) rotateY(0deg);
+  }
+  100% {
+    transform: perspective(1200px) rotateY(8deg);
+  }
+}
