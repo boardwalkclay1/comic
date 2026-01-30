@@ -6,7 +6,6 @@
   --accent-2: #ffd400;
   --danger: #ff1744;
   --panel-border: #000;
-  --shadow-soft: 0 20px 40px rgba(0, 0, 0, 0.25);
   --font-main: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
@@ -19,505 +18,98 @@
   --panel-border: #f7f7ff;
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
+/* Comic backgrounds */
+
+:root[data-theme="hero"] body {
+  background-image: url("../backgrounds/hero-bg.png"), url("../backgrounds/halftone.png");
+  background-size: cover, 320px 320px;
+  background-blend-mode: normal, multiply;
 }
 
-html,
-body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--font-main);
+:root[data-theme="villain"] body {
+  background-image: url("../backgrounds/villain-bg.png"), url("../backgrounds/speedlines.png");
+  background-size: cover, 320px 320px;
+  background-blend-mode: normal, screen;
 }
 
-body.no-scroll {
-  overflow: hidden;
+/* Book frame variants */
+
+.book-frame--comic {
+  border-radius: 4px;
+  border: 4px solid var(--panel-border);
+  box-shadow: 16px 16px 0 var(--panel-border);
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-.app {
-  min-height: 100vh;
-  background: radial-gradient(circle at top, var(--bg-alt), var(--bg));
-  color: var(--text);
-}
-
-.app--fullscreen {
-  display: flex;
-  align-items: stretch;
-  justify-content: center;
-}
-
-.top-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.75rem 1.5rem;
-  border-bottom: 2px solid var(--panel-border);
-  background: linear-gradient(90deg, var(--bg-alt), var(--bg));
-}
-
-.logo-small {
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  font-size: 0.9rem;
-}
-
-.nav-links a {
-  margin: 0 0.5rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  font-size: 0.8rem;
-}
-
-.theme-toggle {
+.book-frame--book {
+  border-radius: 0;
   border: 2px solid var(--panel-border);
-  background: var(--bg);
-  color: var(--text);
-  padding: 0.35rem 0.75rem;
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  cursor: pointer;
-  box-shadow: 3px 3px 0 var(--panel-border);
+  box-shadow: 8px 8px 0 var(--panel-border);
 }
 
-/* Scenes */
+/* Loading overlay */
 
-.scene-container {
-  position: relative;
-  width: 100%;
-  height: 100vh;
-  overflow: hidden;
-}
-
-.scene {
+.loading-overlay {
   position: absolute;
   inset: 0;
-  opacity: 0;
-  pointer-events: none;
-  transform: scale(1.02);
-  transition: opacity 0.6s ease, transform 0.6s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.scene--active {
-  opacity: 1;
-  pointer-events: auto;
-  transform: scale(1);
-}
-
-.scene__inner {
-  max-width: 960px;
-  padding: 2rem;
-}
-
-.scene--center {
-  text-align: center;
-}
-
-.scene__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1rem;
-}
-
-.scene__split {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-  align-items: center;
-}
-
-.scene__next-btn {
-  margin-top: 2rem;
-  padding: 0.6rem 1.4rem;
-  border: 2px solid var(--panel-border);
-  background: var(--accent);
+  background: rgba(0, 0, 0, 0.65);
   color: #fff;
-  font-weight: 700;
-  text-transform: uppercase;
-  cursor: pointer;
-  box-shadow: 4px 4px 0 var(--panel-border);
-}
-
-/* Loader */
-
-.logo-loader {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 0.75rem;
+  justify-content: center;
+  z-index: 2;
 }
 
-.logo-loader__beam {
-  width: 220px;
-  height: 4px;
-  background: linear-gradient(90deg, transparent, var(--accent), transparent);
-  animation: beam 1.4s infinite;
-}
-
-.logo-loader__mark {
-  font-weight: 900;
-  letter-spacing: 0.18em;
-  font-size: 1rem;
-}
-
-.logo-loader__sub {
-  font-size: 0.8rem;
-  opacity: 0.8;
-}
-
-.logo-loader__wheel {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 3px solid var(--panel-border);
-  border-top-color: var(--accent-2);
-  animation: spin 0.9s linear infinite;
-}
-
-@keyframes beam {
-  0% {
-    transform: translateX(-40%);
-    opacity: 0;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(40%);
-    opacity: 0;
-  }
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Background motion */
-
-.bg-motion {
-  position: absolute;
-  inset: 0;
-  background-image:
-    radial-gradient(circle at 10% 20%, rgba(0, 87, 255, 0.25) 0, transparent 50%),
-    radial-gradient(circle at 80% 10%, rgba(255, 212, 0, 0.25) 0, transparent 55%),
-    radial-gradient(circle at 50% 90%, rgba(255, 23, 68, 0.25) 0, transparent 55%);
-  mix-blend-mode: screen;
-  pointer-events: none;
-}
-
-/* Narration */
-
-.narration-box {
-  position: relative;
-  max-width: 520px;
-  padding: 1.5rem;
-  border: 3px solid var(--panel-border);
-  background: var(--bg-alt);
-  box-shadow: var(--shadow-soft);
-  font-size: 1.1rem;
-}
-
-.narration-box--center {
-  margin: 0 auto;
-  text-align: center;
-}
-
-/* Credit panels */
-
-.credit-panel {
-  border: 3px solid var(--panel-border);
-  background: var(--bg-alt);
-  padding: 1rem;
-  box-shadow: 6px 6px 0 var(--panel-border);
-}
-
-.credit-panel h2 {
-  margin-top: 0;
-}
-
-/* Feature panels */
-
-.title-splash {
-  font-size: 2.2rem;
+.loading-inner {
+  padding: 1rem 1.5rem;
+  border: 3px solid #fff;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  text-align: center;
-  margin-bottom: 1.5rem;
-}
-
-.feature-panels {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1rem;
-}
-
-.feature-panel {
-  border: 3px solid var(--panel-border);
-  background: var(--bg-alt);
-  padding: 1rem;
-  box-shadow: 6px 6px 0 var(--panel-border);
-}
-
-/* Speech bubble */
-
-.speech-bubble {
-  position: relative;
-  max-width: 520px;
-  margin: 0 auto;
-  padding: 1.5rem;
-  border: 3px solid var(--panel-border);
-  background: var(--bg-alt);
-  box-shadow: var(--shadow-soft);
-}
-
-.speech-bubble::after {
-  content: "";
-  position: absolute;
-  bottom: -18px;
-  left: 40px;
-  border-width: 18px 18px 0;
-  border-style: solid;
-  border-color: var(--bg-alt) transparent transparent;
-}
-
-/* Theme cards */
-
-.theme-card {
-  border: 3px solid var(--panel-border);
-  padding: 1.5rem;
-  box-shadow: 6px 6px 0 var(--panel-border);
-}
-
-.theme-card--hero {
-  background: linear-gradient(135deg, #ffffff, #e3f0ff);
-}
-
-.theme-card--villain {
-  background: radial-gradient(circle at top, #1a1a2a, #050509);
-}
-
-/* Credit list */
-
-.credit-list {
-  list-style: none;
-  padding: 0;
-  margin-top: 1.5rem;
-  display: grid;
-  gap: 0.4rem;
-}
-
-/* CTA */
-
-.cta-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  justify-content: center;
-}
-
-.btn {
-  border: 3px solid var(--panel-border);
-  padding: 0.6rem 1.4rem;
-  text-transform: uppercase;
-  font-weight: 700;
   font-size: 0.85rem;
-  cursor: pointer;
-  box-shadow: 4px 4px 0 var(--panel-border);
-  background: var(--bg);
 }
 
-.btn--primary {
-  background: var(--accent);
-  color: #fff;
+/* Type tags */
+
+.type-tag {
+  display: inline-block;
+  margin-top: 0.25rem;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  border: 2px solid var(--panel-border);
 }
 
-.btn--secondary {
+.type-tag--comic {
   background: var(--accent-2);
 }
 
-.btn--outline {
-  background: transparent;
+.type-tag--book {
+  background: var(--accent);
+  color: #fff;
 }
 
-.btn--small {
-  padding: 0.4rem 0.9rem;
-  font-size: 0.75rem;
-}
+/* Audio cards */
 
-/* Pages */
-
-.page {
-  padding: 1.5rem;
-  max-width: 1100px;
-  margin: 0 auto;
-}
-
-.page-title {
-  font-size: 1.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-}
-
-.page-subtitle {
-  opacity: 0.8;
-}
-
-/* Library */
-
-.comic-grid {
+.audio-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 1.5rem;
   margin-top: 1.5rem;
 }
 
-.comic-card {
-  border: 3px solid var(--panel-border);
-  background: var(--bg-alt);
-  box-shadow: 6px 6px 0 var(--panel-border);
-  padding: 0.75rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.comic-card__cover {
-  height: 180px;
-  border: 2px solid var(--panel-border);
-  background-image: linear-gradient(135deg, var(--accent), var(--accent-2));
-}
-
-.comic-card__meta h2 {
-  margin: 0 0 0.25rem;
-}
-
-/* Reader */
-
-.app--reader .page--reader {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.reader-controls {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 1rem;
-  align-items: center;
-}
-
-.upload-label {
-  border: 2px dashed var(--panel-border);
-  padding: 0.5rem 0.9rem;
-  cursor: pointer;
-  font-size: 0.8rem;
-  text-transform: uppercase;
-}
-
-.upload-label input {
-  display: none;
-}
-
-.hint {
-  font-size: 0.75rem;
-  opacity: 0.7;
-}
-
-.page-nav {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.reader-stage {
-  display: flex;
-  justify-content: center;
-  margin-top: 0.5rem;
-}
-
-.book-frame {
-  position: relative;
-  width: min(90vw, 800px);
-  height: min(70vh, 520px);
-  border: 4px solid var(--panel-border);
-  background: #fff;
-  box-shadow: 16px 16px 0 var(--panel-border);
-  overflow: hidden;
-}
-
-.page-canvas {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.page-shadow {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, rgba(0, 0, 0, 0.25), transparent 40%, rgba(0, 0, 0, 0.15));
-  mix-blend-mode: multiply;
-  pointer-events: none;
-  opacity: 0.7;
-}
-
-.reader-music {
-  margin-top: 1rem;
-}
-
-.yt-player {
-  width: 100%;
-  max-width: 640px;
-  height: 360px;
-  border: 3px solid var(--panel-border);
-  box-shadow: 8px 8px 0 var(--panel-border);
-}
-
-/* Playlists */
-
-.playlist-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1.5rem;
-  margin-top: 1.5rem;
-}
-
-.playlist-card {
+.audio-card {
   border: 3px solid var(--panel-border);
   background: var(--bg-alt);
   padding: 1rem;
   box-shadow: 6px 6px 0 var(--panel-border);
 }
 
-/* Responsive */
-
-@media (max-width: 768px) {
-  .scene__split {
-    grid-template-columns: 1fr;
-  }
-
-  .book-frame {
-    height: 60vh;
-  }
-
-  .yt-player {
-    height: 220px;
-  }
+.audio-player {
+  width: 100%;
+  margin-top: 0.5rem;
 }
+
+/* Book turn animation */
+
 .book-frame.turn-left {
   animation: turnLeft 0.35s ease;
 }
