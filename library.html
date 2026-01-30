@@ -14,41 +14,19 @@
       <a href="index.html" class="logo-small">CLAYVONTE UNIVERSE</a>
       <nav class="nav-links">
         <a href="library.html">Library</a>
-        <a href="reader.html">Reader</a>
-        <a href="playlists.html">Soundtracks</a>
+        <a href="audio.html">Audio</a>
       </nav>
       <button id="themeToggle" class="theme-toggle">Hero / Villain</button>
     </header>
 
     <main class="page page--library">
-      <h1 class="page-title">Comic Archive</h1>
+      <h1 class="page-title">Library</h1>
       <p class="page-subtitle">
-        Choose an issue to open in the Reading Room. More series coming soon.
+        All comics and books in this universe. Click any title to open it in page form.
       </p>
 
-      <section class="comic-grid" id="comicGrid">
-        <!-- Example static items; you can later wire this to real data -->
-        <article class="comic-card" data-file="assets/sample/sample1.pdf">
-          <div class="comic-card__cover comic-card__cover--1"></div>
-          <div class="comic-card__meta">
-            <h2>Issue #1 – First Descent</h2>
-            <p>Where the longboard meets the page.</p>
-          </div>
-          <a href="reader.html?file=assets/sample/sample1.pdf" class="btn btn--small">
-            Read Issue
-          </a>
-        </article>
-
-        <article class="comic-card" data-file="assets/sample/sample2.pdf">
-          <div class="comic-card__cover comic-card__cover--2"></div>
-          <div class="comic-card__meta">
-            <h2>Issue #2 – Night Ride</h2>
-            <p>Neon streets, rooftop lines, and risk.</p>
-          </div>
-          <a href="reader.html?file=assets/sample/sample2.pdf" class="btn btn--small">
-            Read Issue
-          </a>
-        </article>
+      <section class="comic-grid" id="bookGrid">
+        <!-- Filled by library.js from books.json -->
       </section>
     </main>
   </div>
