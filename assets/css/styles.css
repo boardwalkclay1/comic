@@ -135,3 +135,49 @@
     transform: perspective(1200px) rotateY(8deg);
   }
 }
+/* ================================
+   GLOBAL COLOR SYSTEM
+   ================================ */
+
+:root {
+  --hero-bg: #ffffff;
+  --hero-bg-alt: #e8f1ff;
+  --hero-text: #0a0a0a;
+  --hero-blue: #0077ff;
+  --hero-yellow: #ffd400;
+  --hero-outline: #000000;
+
+  --villain-bg: #050509;
+  --villain-bg-alt: #101020;
+  --villain-text: #f7f7ff;
+  --villain-red: #ff1744;
+  --villain-blue: #00b0ff;
+  --villain-outline: #ffffff;
+
+  --shadow-strong: 0 12px 0 var(--hero-outline);
+  --shadow-strong-dark: 0 12px 0 var(--villain-outline);
+
+  --font-main: "Bangers", "Comic Sans MS", system-ui, sans-serif;
+}
+
+/* HERO MODE */
+:root[data-theme="hero"] {
+  --bg: var(--hero-bg);
+  --bg-alt: var(--hero-bg-alt);
+  --text: var(--hero-text);
+  --accent: var(--hero-blue);
+  --accent-2: var(--hero-yellow);
+  --panel-border: var(--hero-outline);
+  --shadow: var(--shadow-strong);
+}
+
+/* VILLAIN MODE */
+:root[data-theme="villain"] {
+  --bg: var(--villain-bg);
+  --bg-alt: var(--villain-bg-alt);
+  --text: var(--villain-text);
+  --accent: var(--villain-red);
+  --accent-2: var(--villain-blue);
+  --panel-border: var(--villain-outline);
+  --shadow: var(--shadow-strong-dark);
+}
