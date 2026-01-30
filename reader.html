@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="hero">
+<head>
+  <meta charset="UTF-8" />
+  <title>Boardwalk Universe – Reader</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.min.mjs" type="module"></script>
+  <script defer src="assets/js/theme.js"></script>
+  <script type="module" defer src="assets/js/reader.js"></script>
+</head>
+<body>
+  <div id="theme-root" class="app app--reader">
+    <header class="top-bar">
+      <a href="index.html" class="logo-small">CLAYVONTE UNIVERSE</a>
+      <nav class="nav-links">
+        <a href="library.html">Library</a>
+        <a href="playlists.html">Soundtracks</a>
+      </nav>
+      <button id="themeToggle" class="theme-toggle">Hero / Villain</button>
+    </header>
+
+    <main class="page page--reader">
+      <section class="reader-controls">
+        <div class="upload-block">
+          <label class="upload-label">
+            Upload PDF Comic
+            <input type="file" id="pdfInput" accept="application/pdf" />
+          </label>
+          <p class="hint">Or open from Library: query param <code>?file=...</code></p>
+        </div>
+        <div class="page-nav">
+          <button id="prevPage" class="btn btn--small">Prev</button>
+          <span id="pageInfo">Page 0 / 0</span>
+          <button id="nextPage" class="btn btn--small">Next</button>
+        </div>
+      </section>
+
+      <section class="reader-stage">
+        <div class="book-frame">
+          <canvas id="pageCanvas" class="page-canvas"></canvas>
+          <div class="page-shadow"></div>
+        </div>
+      </section>
+
+      <section class="reader-music">
+        <h2>Reading Soundtrack</h2>
+        <iframe
+          id="ytPlayer"
+          class="yt-player"
+          src="https://www.youtube.com/embed/videoseries?list=PLxxxxxxxxxxxx"
+          title="YouTube playlist"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        ></iframe>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
