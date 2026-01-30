@@ -12,23 +12,34 @@
 <body>
   <div id="theme-root" class="app app--reader">
     <header class="top-bar">
-      <a href="index.html" class="logo-small">CLAYVONTE UNIVERSE</a>
+      <a href="library.html" class="logo-small">← Library</a>
       <nav class="nav-links">
-        <a href="library.html">Library</a>
-        <a href="playlists.html">Soundtracks</a>
+        <a href="audio.html">Audio</a>
       </nav>
       <button id="themeToggle" class="theme-toggle">Hero / Villain</button>
     </header>
 
     <main class="page page--reader">
-      <section class="reader-controls">
-        <div class="upload-block">
-          <label class="upload-label">
-            Upload PDF Comic
-            <input type="file" id="pdfInput" accept="application/pdf" />
-          </label>
-          <p class="hint">Or open from Library: query param <code>?file=...</code></p>
+      <section class="reader-header">
+        <h1 id="bookTitle" class="page-title">Loading…</h1>
+        <p id="bookDescription" class="page-subtitle"></p>
+        <span id="bookTypeTag" class="type-tag"></span>
+      </section>
+
+      <section class="reader-stage">
+        <div class="book-frame" id="bookFrame">
+          <div class="loading-overlay" id="loadingOverlay">
+            <div class="loading-inner" id="loadingInner">
+              <!-- JS will swap text between “Comic Loading” and “Book Loading” -->
+              <span id="loadingText">Loading pages…</span>
+            </div>
+          </div>
+          <canvas id="pageCanvas" class="page-canvas"></canvas>
+          <div class="page-shadow"></div>
         </div>
+      </section>
+
+      <section class="reader-controls">
         <div class="page-nav">
           <button id="prevPage" class="btn btn--small">Prev</button>
           <span id="pageInfo">Page 0 / 0</span>
@@ -36,19 +47,12 @@
         </div>
       </section>
 
-      <section class="reader-stage">
-        <div class="book-frame">
-          <canvas id="pageCanvas" class="page-canvas"></canvas>
-          <div class="page-shadow"></div>
-        </div>
-      </section>
-
       <section class="reader-music">
-        <h2>Reading Soundtrack</h2>
+        <h2>Soundtrack</h2>
         <iframe
           id="ytPlayer"
           class="yt-player"
-          src="https://www.youtube.com/embed/videoseries?list=PLxxxxxxxxxxxx"
+          src=""
           title="YouTube playlist"
           frameborder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
