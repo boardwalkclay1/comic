@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="hero">
+<head>
+  <meta charset="UTF-8" />
+  <title>Boardwalk Universe – Origin Sequence</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <script defer src="assets/js/theme.js"></script>
+  <script defer src="assets/js/index.js"></script>
+</head>
+<body class="no-scroll">
+  <div id="theme-root" class="app app--fullscreen">
+
+    <!-- Theme toggle (hero / villain) -->
+    <button id="themeToggle" class="theme-toggle">
+      <span class="theme-toggle__label">Hero / Villain</span>
+    </button>
+
+    <!-- Scene container -->
+    <div id="sceneContainer" class="scene-container">
+
+      <!-- Scene 1: Logo -->
+      <section class="scene scene--active" data-scene="1">
+        <div class="scene__inner scene--center">
+          <div class="logo-loader">
+            <div class="logo-loader__beam"></div>
+            <div class="logo-loader__mark">CLAYVONTE UNIVERSE</div>
+            <div class="logo-loader__sub">A Clayvonte Universe Production</div>
+            <div class="logo-loader__wheel"></div>
+          </div>
+          <button class="scene__next-btn" data-next="2">Enter</button>
+        </div>
+      </section>
+
+      <!-- Scene 2: World opens -->
+      <section class="scene" data-scene="2">
+        <div class="scene__inner">
+          <div class="bg-motion"></div>
+          <div class="narration-box">
+            <p>Every universe has an origin story…</p>
+            <p>This one began on four wheels and a blank page.</p>
+          </div>
+          <button class="scene__next-btn" data-next="3">Next</button>
+        </div>
+      </section>
+
+      <!-- Scene 3: Origin credits -->
+      <section class="scene" data-scene="3">
+        <div class="scene__inner scene__grid">
+          <div class="credit-panel">
+            <h2>THE LONGBOARDER</h2>
+            <p>Professional longboarder. Balance. Flow. Momentum.</p>
+          </div>
+          <div class="credit-panel">
+            <h2>THE AUTHOR</h2>
+            <p>Writer. Worldbuilder. Story architect.</p>
+          </div>
+          <div class="credit-panel">
+            <h2>THE INVENTOR</h2>
+            <p>Creator of the flip‑book digital comic format.</p>
+          </div>
+          <div class="credit-panel">
+            <h2>THE VISIONARY</h2>
+            <p>A new medium. A new experience. A first of its kind.</p>
+          </div>
+          <button class="scene__next-btn" data-next="4">Next</button>
+        </div>
+      </section>
+
+      <!-- Scene 4: What this platform does -->
+      <section class="scene" data-scene="4">
+        <div class="scene__inner">
+          <h1 class="title-splash">WELCOME TO THE BOARDWALK UNIVERSE</h1>
+          <div class="feature-panels">
+            <div class="feature-panel">
+              <h2>READ</h2>
+              <p>Upload your comics. Watch them turn like real pages.</p>
+            </div>
+            <div class="feature-panel">
+              <h2>LISTEN</h2>
+              <p>Play curated soundtracks while you read.</p>
+            </div>
+            <div class="feature-panel">
+              <h2>EXPLORE</h2>
+              <p>Dive into the archive. Discover new issues.</p>
+            </div>
+          </div>
+          <button class="scene__next-btn" data-next="5">Next</button>
+        </div>
+      </section>
+
+      <!-- Scene 5: How it works -->
+      <section class="scene" data-scene="5">
+        <div class="scene__inner">
+          <div class="speech-bubble">
+            <h2>HOW IT WORKS</h2>
+            <ul>
+              <li>Tap a comic cover to open the Reading Room.</li>
+              <li>Swipe or click to turn pages.</li>
+              <li>Use the playlist bar for music.</li>
+              <li>Switch themes anytime.</li>
+              <li>Save your place and return later.</li>
+            </ul>
+          </div>
+          <button class="scene__next-btn" data-next="6">Next</button>
+        </div>
+      </section>
+
+      <!-- Scene 6: Theme transformation -->
+      <section class="scene" data-scene="6">
+        <div class="scene__inner scene__split">
+          <div class="theme-card theme-card--hero">
+            <h2>HERO MODE</h2>
+            <p>Daylight. Hope. Clarity.</p>
+          </div>
+          <div class="theme-card theme-card--villain">
+            <h2>VILLAIN MODE</h2>
+            <p>Nightfall. Power. Mystery.</p>
+          </div>
+          <button id="chooseModeBtn" class="scene__next-btn" data-next="7">
+            Choose Your Mode
+          </button>
+        </div>
+      </section>
+
+      <!-- Scene 7: Why it's new -->
+      <section class="scene" data-scene="7">
+        <div class="scene__inner">
+          <div class="narration-box narration-box--center">
+            <p>This isn’t a PDF viewer.</p>
+            <p>This isn’t a slideshow.</p>
+            <p>This is a cinematic reading engine.</p>
+          </div>
+          <ul class="credit-list">
+            <li>Real page‑turn animation</li>
+            <li>Music integration</li>
+            <li>Multi‑theme universe</li>
+            <li>Author‑inventor‑longboarder identity</li>
+            <li>Immersive reading room</li>
+            <li>A new digital comic format</li>
+          </ul>
+          <button class="scene__next-btn" data-next="8">Next</button>
+        </div>
+      </section>
+
+      <!-- Scene 8: Call to action -->
+      <section class="scene" data-scene="8">
+        <div class="scene__inner scene--center">
+          <h1 class="title-splash">BEGIN YOUR JOURNEY</h1>
+          <div class="cta-buttons">
+            <a href="library.html" class="btn btn--primary">Enter the Library</a>
+            <a href="playlists.html" class="btn btn--secondary">Open the Soundtrack Vault</a>
+            <a href="reader.html" class="btn btn--outline">Upload Your First Comic</a>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</body>
+</html>
