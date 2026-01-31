@@ -4,32 +4,22 @@
       "id": "comic-issue1",
       "title": "Issue #1 – First Descent",
       "type": "comic",
+      "readAloud": false,
       "description": "Where the longboard meets the page.",
       "file": "books/comic-issue1.pdf",
-      "playlistId": "PLxxxxxxxxxxxx",
-      "audioFile": "audio/comic-issue1.mp3",
+      "playlistId": "PL_COMIC_1",
       "coverClass": "cover-comic-1"
-    },
-    {
-      "id": "comic-issue2",
-      "title": "Issue #2 – Night Ride",
-      "type": "comic",
-      "description": "Neon streets, rooftop lines, and risk.",
-      "file": "books/comic-issue2.pdf",
-      "playlistId": "PLyyyyyyyyyyyy",
-      "audioFile": "audio/comic-issue2.mp3",
-      "coverClass": "cover-comic-2"
     },
     {
       "id": "novel-1",
       "title": "The Longboarder’s Manifesto",
       "type": "book",
+      "readAloud": true,
       "description": "A written journey through balance, risk, and invention.",
       "file": "books/novel-1.pdf",
-      "playlistId": "PLzzzzzzzzzzzz",
-      "audioFile": "audio/novel-1.mp3",
+      "playlistId": "PL_BOOK_1",
       "coverClass": "cover-book-1"
     }
   ],
-  "defaultPlaylistId": "PLxxxxxxxxxxxx"
+  "defaultPlaylistId": "PL_DEFAULT"
 }
