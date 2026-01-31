@@ -1,367 +1,63 @@
-:root {
-  --bg: #fdfdfd;
-  --bg-alt: #f0f4ff;
-  --text: #111;
-  --accent: #0057ff;
-  --accent-2: #ffd400;
-  --danger: #ff1744;
-  --panel-border: #000;
-  --font-main: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-}
-
-:root[data-theme="villain"] {
-  --bg: #050509;
-  --bg-alt: #101020;
-  --text: #f7f7ff;
-  --accent: #ff1744;
-  --accent-2: #00b0ff;
-  --panel-border: #f7f7ff;
-}
-
-/* Comic backgrounds */
-
-:root[data-theme="hero"] body {
-  background-image: url("../backgrounds/hero-bg.png"), url("../backgrounds/halftone.png");
-  background-size: cover, 320px 320px;
-  background-blend-mode: normal, multiply;
-}
-
-:root[data-theme="villain"] body {
-  background-image: url("../backgrounds/villain-bg.png"), url("../backgrounds/speedlines.png");
-  background-size: cover, 320px 320px;
-  background-blend-mode: normal, screen;
-}
-
-/* Book frame variants */
-
-.book-frame--comic {
-  border-radius: 4px;
-  border: 4px solid var(--panel-border);
-  box-shadow: 16px 16px 0 var(--panel-border);
-}
-
-.book-frame--book {
-  border-radius: 0;
-  border: 2px solid var(--panel-border);
-  box-shadow: 8px 8px 0 var(--panel-border);
-}
-
-/* Loading overlay */
-
-.loading-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.65);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2;
-}
-
-.loading-inner {
-  padding: 1rem 1.5rem;
-  border: 3px solid #fff;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  font-size: 0.85rem;
-}
-
-/* Type tags */
-
-.type-tag {
-  display: inline-block;
-  margin-top: 0.25rem;
-  padding: 0.15rem 0.5rem;
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  border: 2px solid var(--panel-border);
-}
-
-.type-tag--comic {
-  background: var(--accent-2);
-}
-
-.type-tag--book {
-  background: var(--accent);
-  color: #fff;
-}
-
-/* Audio cards */
-
-.audio-grid {
+.reader-layout {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: minmax(0, 2.2fr) minmax(260px, 1fr);
   gap: 1.5rem;
   margin-top: 1.5rem;
 }
 
-.audio-card {
-  border: 3px solid var(--panel-border);
-  background: var(--bg-alt);
-  padding: 1rem;
-  box-shadow: 6px 6px 0 var(--panel-border);
+.reader-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
-.audio-player {
-  width: 100%;
+.reader-right {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.readaloud-controls .control-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   margin-top: 0.5rem;
 }
 
-/* Book turn animation */
-
-.book-frame.turn-left {
-  animation: turnLeft 0.35s ease;
+.control-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
 }
 
-.book-frame.turn-right {
-  animation: turnRight 0.35s ease;
-}
-
-@keyframes turnLeft {
-  0% {
-    transform: perspective(1200px) rotateY(0deg);
-  }
-  100% {
-    transform: perspective(1200px) rotateY(-8deg);
-  }
-}
-
-@keyframes turnRight {
-  0% {
-    transform: perspective(1200px) rotateY(0deg);
-  }
-  100% {
-    transform: perspective(1200px) rotateY(8deg);
-  }
-}
-/* ================================
-   GLOBAL COLOR SYSTEM
-   ================================ */
-
-:root {
-  --hero-bg: #ffffff;
-  --hero-bg-alt: #e8f1ff;
-  --hero-text: #0a0a0a;
-  --hero-blue: #0077ff;
-  --hero-yellow: #ffd400;
-  --hero-outline: #000000;
-
-  --villain-bg: #050509;
-  --villain-bg-alt: #101020;
-  --villain-text: #f7f7ff;
-  --villain-red: #ff1744;
-  --villain-blue: #00b0ff;
-  --villain-outline: #ffffff;
-
-  --shadow-strong: 0 12px 0 var(--hero-outline);
-  --shadow-strong-dark: 0 12px 0 var(--villain-outline);
-
-  --font-main: "Bangers", "Comic Sans MS", system-ui, sans-serif;
-}
-
-/* HERO MODE */
-:root[data-theme="hero"] {
-  --bg: var(--hero-bg);
-  --bg-alt: var(--hero-bg-alt);
-  --text: var(--hero-text);
-  --accent: var(--hero-blue);
-  --accent-2: var(--hero-yellow);
-  --panel-border: var(--hero-outline);
-  --shadow: var(--shadow-strong);
-}
-
-/* VILLAIN MODE */
-:root[data-theme="villain"] {
-  --bg: var(--villain-bg);
-  --bg-alt: var(--villain-bg-alt);
-  --text: var(--villain-text);
-  --accent: var(--villain-red);
-  --accent-2: var(--villain-blue);
-  --panel-border: var(--villain-outline);
-  --shadow: var(--shadow-strong-dark);
-}
-/* ================================
-   BACKGROUNDS
-   ================================ */
-
-body {
-  background-color: var(--bg);
-  background-image:
-    url("../backgrounds/halftone.png"),
-    url("../backgrounds/hero-bg.png");
-  background-size: 300px 300px, cover;
-  background-blend-mode: multiply;
-  color: var(--text);
-  font-family: var(--font-main);
-  margin: 0;
-  padding: 0;
-}
-
-:root[data-theme="villain"] body {
-  background-image:
-    url("../backgrounds/speedlines.png"),
-    url("../backgrounds/villain-bg.png");
-  background-blend-mode: screen;
-}
-/* ================================
-   COMIC PANEL STYLE
-   ================================ */
-
-.comic-panel,
-.feature-panel,
-.credit-panel,
-.audio-card,
-.comic-card {
-  border: 4px solid var(--panel-border);
-  background: var(--bg-alt);
-  box-shadow: var(--shadow);
-  padding: 1rem;
-  border-radius: 6px;
-  transition: transform 0.2s ease;
-}
-
-.comic-card:hover,
-.feature-panel:hover {
-  transform: translateY(-6px);
-}
-/* ================================
-   SPEECH BUBBLE
-   ================================ */
-
-.speech-bubble {
-  position: relative;
-  background: var(--bg-alt);
-  border: 4px solid var(--panel-border);
-  padding: 1.5rem;
-  box-shadow: var(--shadow);
-  border-radius: 12px;
-}
-
-.speech-bubble::after {
-  content: "";
-  position: absolute;
-  bottom: -20px;
-  left: 40px;
-  border-width: 20px 20px 0;
-  border-style: solid;
-  border-color: var(--bg-alt) transparent transparent;
-}
-/* ================================
-   LIBRARY GRID
-   ================================ */
-
-.comic-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 2rem;
+.reader-music {
   margin-top: 2rem;
 }
 
-.comic-card__cover {
-  height: 200px;
-  background-size: cover;
-  background-position: center;
-  border: 3px solid var(--panel-border);
-  box-shadow: var(--shadow);
-}
-
-/* Example placeholder covers */
-.cover-comic-1 { background-image: url("../backgrounds/cover1.png"); }
-.cover-comic-2 { background-image: url("../backgrounds/cover2.png"); }
-.cover-book-1  { background-image: url("../backgrounds/bookcover1.png"); }
-/* ================================
-   READER PAGE
-   ================================ */
-
-.book-frame {
-  position: relative;
-  width: min(90vw, 900px);
-  height: min(70vh, 600px);
-  margin: 0 auto;
-  background: white;
-  border: 6px solid var(--panel-border);
-  box-shadow: var(--shadow);
-  overflow: hidden;
-}
-
-.book-frame--comic {
-  border-radius: 4px;
-}
-
-.book-frame--book {
-  border-radius: 0;
-  border-style: double;
-}
-/* ================================
-   PAGE TURN ANIMATION
-   ================================ */
-
-.book-frame.turn-left {
-  animation: turnLeft 0.35s ease;
-}
-
-.book-frame.turn-right {
-  animation: turnRight 0.35s ease;
-}
-
-@keyframes turnLeft {
-  0% { transform: perspective(1200px) rotateY(0deg); }
-  100% { transform: perspective(1200px) rotateY(-10deg); }
-}
-
-@keyframes turnRight {
-  0% { transform: perspective(1200px) rotateY(0deg); }
-  100% { transform: perspective(1200px) rotateY(10deg); }
-}
-/* ================================
-   AUDIO CARDS
-   ================================ */
-
-.audio-grid {
+.music-layout {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 2rem;
-  margin-top: 2rem;
-}
-
-.audio-card {
-  border: 4px solid var(--panel-border);
-  background: var(--bg-alt);
-  padding: 1rem;
-  box-shadow: var(--shadow);
-  border-radius: 6px;
-}
-
-.audio-player {
-  width: 100%;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.2fr);
+  gap: 1rem;
   margin-top: 1rem;
 }
-/* ================================
-   SCENE SYSTEM
-   ================================ */
 
-.scene-container {
-  position: relative;
+.yt-player {
   width: 100%;
-  height: 100vh;
-  overflow: hidden;
+  min-height: 220px;
+  border: 3px solid var(--panel-border);
 }
 
-.scene {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  pointer-events: none;
-  transform: scale(1.05);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+.yt-player--search {
+  min-height: 260px;
+}
+
+.yt-search-bar {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
-.scene--active {
-  opacity: 1;
-  pointer-events: auto;
-  transform: scale(1);
+.yt-search-bar input {
+  flex: 1;
+  padding: 0.4rem 0.6rem;
+  border: 2px solid var(--panel-border);
 }
