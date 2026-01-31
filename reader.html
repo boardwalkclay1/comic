@@ -14,50 +14,109 @@
     <header class="top-bar">
       <a href="library.html" class="logo-small">← Library</a>
       <nav class="nav-links">
-        <a href="audio.html">Audio</a>
+        <a href="index.html">Origin</a>
       </nav>
       <button id="themeToggle" class="theme-toggle">Hero / Villain</button>
     </header>
 
     <main class="page page--reader">
+      <!-- HEADER -->
       <section class="reader-header">
         <h1 id="bookTitle" class="page-title">Loading…</h1>
         <p id="bookDescription" class="page-subtitle"></p>
         <span id="bookTypeTag" class="type-tag"></span>
       </section>
 
-      <section class="reader-stage">
-        <div class="book-frame" id="bookFrame">
-          <div class="loading-overlay" id="loadingOverlay">
-            <div class="loading-inner" id="loadingInner">
-              <!-- JS will swap text between “Comic Loading” and “Book Loading” -->
-              <span id="loadingText">Loading pages…</span>
+      <!-- MAIN LAYOUT: LEFT = PAGES, RIGHT = READ-ALOUD CONTROLS -->
+      <section class="reader-layout">
+        <div class="reader-left">
+          <div class="book-frame" id="bookFrame">
+            <div class="loading-overlay" id="loadingOverlay">
+              <div class="loading-inner">
+                <span id="loadingText">Loading pages…</span>
+              </div>
+            </div>
+            <canvas id="pageCanvas" class="page-canvas"></canvas>
+            <div class="page-shadow"></div>
+          </div>
+
+          <div class="page-nav">
+            <button id="prevPage" class="btn btn--small">Prev</button>
+            <span id="pageInfo">Page 0 / 0</span>
+            <button id="nextPage" class="btn btn--small">Next</button>
+          </div>
+        </div>
+
+        <aside class="reader-right">
+          <div class="comic-panel" id="readAloudPanel">
+            <h2>Read Aloud</h2>
+            <p id="readAloudHint">
+              This book supports automatic read‑aloud. Choose a voice and press Play.
+            </p>
+
+            <div class="readaloud-controls">
+              <div class="control-row">
+                <button id="raPlay" class="btn btn--small">Play</button>
+                <button id="raPause" class="btn btn--small">Pause</button>
+                <button id="raStop" class="btn btn--small">Stop</button>
+              </div>
+
+              <div class="control-row">
+                <label class="control-label">Voice</label>
+                <select id="raVoiceSelect"></select>
+              </div>
+
+              <div class="control-row">
+                <label class="control-label">Speed</label>
+                <input id="raRate" type="range" min="0.7" max="1.5" step="0.1" value="1" />
+              </div>
+            </div>
+
+            <p class="hint" id="readAloudStatus"></p>
+          </div>
+        </aside>
+      </section>
+
+      <!-- MUSIC SECTION UNDER EVERYTHING -->
+      <section class="reader-music">
+        <div class="comic-panel">
+          <h2>Music & Soundtrack</h2>
+          <p class="hint">
+            Play my curated playlist or search YouTube for your own reading soundtrack.
+          </p>
+
+          <div class="music-layout">
+            <div class="music-left">
+              <h3>My Playlist for this Book</h3>
+              <iframe
+                id="ytPlaylist"
+                class="yt-player"
+                src=""
+                title="Book playlist"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+              ></iframe>
+            </div>
+
+            <div class="music-right">
+              <h3>Search YouTube</h3>
+              <div class="yt-search-bar">
+                <input id="ytSearchInput" type="text" placeholder="Search songs on YouTube…" />
+                <button id="ytSearchBtn" class="btn btn--small">Search</button>
+              </div>
+              <iframe
+                id="ytSearchFrame"
+                class="yt-player yt-player--search"
+                src=""
+                title="YouTube search"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+              ></iframe>
             </div>
           </div>
-          <canvas id="pageCanvas" class="page-canvas"></canvas>
-          <div class="page-shadow"></div>
         </div>
-      </section>
-
-      <section class="reader-controls">
-        <div class="page-nav">
-          <button id="prevPage" class="btn btn--small">Prev</button>
-          <span id="pageInfo">Page 0 / 0</span>
-          <button id="nextPage" class="btn btn--small">Next</button>
-        </div>
-      </section>
-
-      <section class="reader-music">
-        <h2>Soundtrack</h2>
-        <iframe
-          id="ytPlayer"
-          class="yt-player"
-          src=""
-          title="YouTube playlist"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-        ></iframe>
       </section>
     </main>
   </div>
