@@ -6,7 +6,7 @@
       "type": "comic",
       "readAloud": false,
       "description": "A boy discovers a hidden lake full of gold and treasure, but no one in his impoverished town believes him.",
-      "file": "assets/books/Gold Lake (1).pdf",
+      "file": "books/Gold Lake (1).pdf",
       "playlistId": "",
       "coverClass": "cover-goldlake-1"
     },
@@ -16,7 +16,7 @@
       "type": "comic",
       "readAloud": false,
       "description": "The mystery deepens as the boy returns to the lake, determined to prove the treasure is real.",
-      "file": "assets/books/Gold Lake (2).pdf",
+      "file": "books/Gold Lake (2).pdf",
       "playlistId": "",
       "coverClass": "cover-goldlake-2"
     },
@@ -25,8 +25,8 @@
       "title": "New Civil War – Part 1",
       "type": "comic",
       "readAloud": false,
-      "description": "A modern‑day America on the brink of collapse as tensions rise and a new civil war begins to spark.",
-      "file": "assets/books/New Civil War (1).pdf",
+      "description": "A modern-day America on the brink of collapse as tensions rise and a new civil war begins to spark.",
+      "file": "books/New Civil War (1).pdf",
       "playlistId": "",
       "coverClass": "cover-newcivilwar-1"
     },
@@ -36,7 +36,7 @@
       "type": "comic",
       "readAloud": false,
       "description": "Chaos spreads as factions form and the country fractures under pressure.",
-      "file": "assets/books/New Civil War (2).pdf",
+      "file": "books/New Civil War (2).pdf",
       "playlistId": "",
       "coverClass": "cover-newcivilwar-2"
     },
@@ -46,7 +46,7 @@
       "type": "comic",
       "readAloud": false,
       "description": "The conflict reaches a boiling point as the nation faces its most dangerous moment.",
-      "file": "assets/books/New Civil War (3).pdf",
+      "file": "books/New Civil War (3).pdf",
       "playlistId": "",
       "coverClass": "cover-newcivilwar-3"
     }
