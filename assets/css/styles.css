@@ -186,3 +186,30 @@ html[data-theme="villain"] {
   --comic-black: #000000;
   background: #000;
 }
+/* ================================
+   HERO / VILLAIN THEMES (UPDATED)
+================================ */
+
+/* HERO THEME — black background, red/blue/yellow focus */
+html[data-theme="hero"] {
+  --comic-blue: #4dabff;      /* bright hero blue */
+  --comic-red: #ff2e2e;       /* punchier hero red */
+  --comic-yellow: #ffe066;    /* classic comic yellow */
+  --comic-white: #f5f5f5;     /* soft white accents */
+  --comic-black: #000000;     /* deep black */
+
+  background: #000000;        /* hero = black backdrop */
+  color: var(--comic-white);
+}
+
+/* VILLAIN THEME — blue/yellow/white + added red */
+html[data-theme="villain"] {
+  --comic-blue: #1a3d7c;      /* darker villain blue */
+  --comic-yellow: #d4b200;    /* muted villain yellow */
+  --comic-white: #e6e6e6;     /* cold white */
+  --comic-red: #b30000;       /* villain red (added) */
+  --comic-black: #000000;
+
+  background: #000000;        /* villain stays dark */
+  color: var(--comic-white);
+}
