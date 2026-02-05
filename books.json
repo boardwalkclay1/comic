@@ -1,25 +1,55 @@
 {
   "books": [
     {
-      "id": "comic-issue1",
-      "title": "Issue #1 – First Descent",
+      "id": "gold-lake-1",
+      "title": "Gold Lake – Part 1",
       "type": "comic",
       "readAloud": false,
-      "description": "Where the longboard meets the page.",
-      "file": "books/comic-issue1.pdf",
-      "playlistId": "PL_COMIC_1",
-      "coverClass": "cover-comic-1"
+      "description": "A boy discovers a hidden lake full of gold and treasure, but no one in his impoverished town believes him.",
+      "file": "assets/books/Gold Lake (1).pdf",
+      "playlistId": "",
+      "coverClass": "cover-goldlake-1"
     },
     {
-      "id": "novel-1",
-      "title": "The Longboarder’s Manifesto",
-      "type": "book",
-      "readAloud": true,
-      "description": "A written journey through balance, risk, and invention.",
-      "file": "books/novel-1.pdf",
-      "playlistId": "PL_BOOK_1",
-      "coverClass": "cover-book-1"
+      "id": "gold-lake-2",
+      "title": "Gold Lake – Part 2",
+      "type": "comic",
+      "readAloud": false,
+      "description": "The mystery deepens as the boy returns to the lake, determined to prove the treasure is real.",
+      "file": "assets/books/Gold Lake (2).pdf",
+      "playlistId": "",
+      "coverClass": "cover-goldlake-2"
+    },
+    {
+      "id": "new-civil-war-1",
+      "title": "New Civil War – Part 1",
+      "type": "comic",
+      "readAloud": false,
+      "description": "A modern‑day America on the brink of collapse as tensions rise and a new civil war begins to spark.",
+      "file": "assets/books/New Civil War (1).pdf",
+      "playlistId": "",
+      "coverClass": "cover-newcivilwar-1"
+    },
+    {
+      "id": "new-civil-war-2",
+      "title": "New Civil War – Part 2",
+      "type": "comic",
+      "readAloud": false,
+      "description": "Chaos spreads as factions form and the country fractures under pressure.",
+      "file": "assets/books/New Civil War (2).pdf",
+      "playlistId": "",
+      "coverClass": "cover-newcivilwar-2"
+    },
+    {
+      "id": "new-civil-war-3",
+      "title": "New Civil War – Part 3",
+      "type": "comic",
+      "readAloud": false,
+      "description": "The conflict reaches a boiling point as the nation faces its most dangerous moment.",
+      "file": "assets/books/New Civil War (3).pdf",
+      "playlistId": "",
+      "coverClass": "cover-newcivilwar-3"
     }
   ],
-  "defaultPlaylistId": "PL_DEFAULT"
+  "defaultPlaylistId": ""
 }
