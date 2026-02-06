@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Boardwalk PDF Comic Reader</title>
+  <title>Boardwalk Comic Reader</title>
 
   <style>
     :root {
@@ -27,7 +27,6 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      z-index: 10;
     }
 
     footer {
@@ -88,21 +87,16 @@
       text-transform: uppercase;
     }
 
-    /* Compact, stylish YouTube section */
-    #musicPlayer {
-      padding: 10px 16px 14px 16px;
+    /* MUSIC SECTION */
+    #musicSection {
+      padding: 15px;
       background: #05060f;
-      border-top: 1px solid #222838;
+      border-top: 1px solid #222;
     }
 
-    #ytSearchBar {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-
-    #ytSearch {
-      flex: 1;
+    #musicSearch {
+      width: 100%;
+      max-width: 360px;
       padding: 6px 10px;
       border-radius: 999px;
       border: 1px solid #343c66;
@@ -112,65 +106,28 @@
       outline: none;
     }
 
-    #ytSearch::placeholder {
-      color: #6b72a8;
-    }
-
-    #ytBtn {
-      padding: 6px 14px;
-      border-radius: 999px;
-      background: #1b2140;
-      border: 1px solid var(--theme-accent);
-      color: #e5e7ff;
-      font-size: 11px;
-      text-transform: uppercase;
-      cursor: pointer;
-    }
-
-    #ytBtn:hover {
-      background: var(--theme-accent);
-    }
-
-    #ytResults {
+    #musicResults {
       margin-top: 8px;
       max-height: 140px;
       overflow-y: auto;
+      font-size: 12px;
     }
 
-    .yt-result {
-      display: flex;
-      align-items: center;
-      gap: 6px;
+    .music-row {
       padding: 4px 0;
       cursor: pointer;
-      font-size: 11px;
       color: #cfd3ff;
     }
 
-    .yt-result:hover {
+    .music-row:hover {
       color: #ffffff;
     }
 
-    .yt-thumb {
-      width: 40px;
-      height: 24px;
-      object-fit: cover;
-      border-radius: 4px;
-    }
-
-    #ytPlayerWrapper {
+    #musicPlayer {
       margin-top: 10px;
-      display: none;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 0 18px rgba(0,0,0,0.7);
-      border: 1px solid var(--theme-accent);
-      max-width: 360px;
-    }
-
-    #ytPlayer {
       width: 100%;
-      height: 200px;
+      max-width: 360px;
+      border-radius: 8px;
     }
   </style>
 </head>
@@ -189,15 +146,14 @@
   </div>
 </div>
 
-<div id="musicPlayer">
-  <div id="ytSearchBar">
-    <input id="ytSearch" placeholder="Search YouTube music…" />
-    <button id="ytBtn">Search</button>
-  </div>
-  <div id="ytResults"></div>
-  <div id="ytPlayerWrapper">
-    <div id="ytPlayer"></div>
-  </div>
+<!-- MUSIC SECTION -->
+<div id="musicSection">
+  <input id="musicSearch" placeholder="Search music…">
+  <div id="musicResults"></div>
+
+  <audio id="musicPlayer" controls>
+    <source id="musicSource" src="" type="audio/mpeg">
+  </audio>
 </div>
 
 <footer>
@@ -205,8 +161,6 @@
   <div class="page-info" id="pageInfo">Page 0 / 0</div>
   <button id="nextBtn">Next</button>
 </footer>
-
-<script src="https://www.youtube.com/iframe_api"></script>
 
 <script type="module">
   import * as pdfjsLib from "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.149/pdf.min.mjs";
@@ -223,21 +177,14 @@
   };
 
   let fileName = new URLSearchParams(window.location.search).get("id");
+  if (!fileName) throw new Error("Missing ?id=");
 
-  if (!fileName) {
-    document.getElementById("status").textContent = "No PDF specified.";
-    throw new Error("Missing ?id= parameter");
-  }
-
-  if (!fileName.toLowerCase().endsWith(".pdf")) {
-    fileName = fileName + ".pdf";
-  }
+  if (!fileName.toLowerCase().endsWith(".pdf")) fileName += ".pdf";
 
   const baseName = fileName.replace(".pdf", "");
   const themeColor = comicThemes[baseName] || "#343c66";
 
   document.documentElement.style.setProperty("--theme-accent", themeColor);
-  document.documentElement.style.setProperty("--theme-bg", "#05060a");
 
   const PDF_URL = `https://boardwalkclay1.github.io/comic/assets/books/${fileName}`;
 
@@ -248,8 +195,6 @@
 
   const status = document.getElementById("status");
   const pageInfo = document.getElementById("pageInfo");
-  const prevBtn = document.getElementById("prevBtn");
-  const nextBtn = document.getElementById("nextBtn");
 
   let pdfDoc = null;
   let currentPage = 1;
@@ -284,9 +229,7 @@
     front.style.transform = "translateX(-50%) rotateY(0deg)";
     back.style.transform = "translateX(-50%) rotateY(180deg)";
 
-    requestAnimationFrame(() => {
-      back.classList.add("flip");
-    });
+    requestAnimationFrame(() => back.classList.add("flip"));
 
     setTimeout(() => {
       back.classList.remove("flip");
@@ -298,96 +241,95 @@
   }
 
   async function loadPdf() {
-    try {
-      setStatus(`Loading ${fileName}…`);
-      const loadingTask = pdfjsLib.getDocument(PDF_URL);
-      pdfDoc = await loadingTask.promise;
+    setStatus(`Loading ${fileName}…`);
+    const loadingTask = pdfjsLib.getDocument(PDF_URL);
+    pdfDoc = await loadingTask.promise;
 
-      totalPages = pdfDoc.numPages;
+    totalPages = pdfDoc.numPages;
 
-      await renderPageToCanvas(1, pageA, ctxA);
-      pageInfo.textContent = `Page 1 / ${totalPages}`;
-      setStatus("Ready");
-    } catch (err) {
-      console.error(err);
-      setStatus("Failed to load PDF");
-    }
+    await renderPageToCanvas(1, pageA, ctxA);
+    pageInfo.textContent = `Page 1 / ${totalPages}`;
+    setStatus("Ready");
   }
 
-  prevBtn.onclick = () => {
-    if (currentPage <= 1) return;
-    flipToPage(currentPage - 1);
+  document.getElementById("prevBtn").onclick = () => {
+    if (currentPage > 1) flipToPage(currentPage - 1);
   };
 
-  nextBtn.onclick = () => {
-    if (currentPage >= totalPages) return;
-    flipToPage(currentPage + 1);
+  document.getElementById("nextBtn").onclick = () => {
+    if (currentPage < totalPages) flipToPage(currentPage + 1);
   };
 
   loadPdf();
 
-  // YOUTUBE
-  let ytPlayer;
-
-  window.onYouTubeIframeAPIReady = () => {
-    ytPlayer = new YT.Player("ytPlayer", {
-      height: "200",
-      width: "360",
-      videoId: "",
-      playerVars: { autoplay: 1 }
-    });
-  };
-
-  const ytBtn = document.getElementById("ytBtn");
-  const ytSearch = document.getElementById("ytSearch");
-  const ytResults = document.getElementById("ytResults");
-  const ytPlayerWrapper = document.getElementById("ytPlayerWrapper");
-
-  ytBtn.onclick = async () => {
-    const q = ytSearch.value.trim();
-    if (!q) return;
-
-    // Replace YOUR_API_KEY with a valid YouTube Data API v3 key
-    const apiKey = "YOUR_API_KEY";
-    const url =
-      `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=5&q=${encodeURIComponent(q)}&key=${apiKey}`;
-
-    try {
-      const res = await fetch(url);
-      const data = await res.json();
-
-      ytResults.innerHTML = "";
-
-      (data.items || []).forEach(item => {
-        const vid = item.id.videoId;
-        const title = item.snippet.title;
-        const thumb = item.snippet.thumbnails.default?.url;
-
-        const row = document.createElement("div");
-        row.className = "yt-result";
-
-        if (thumb) {
-          const img = document.createElement("img");
-          img.src = thumb;
-          img.className = "yt-thumb";
-          row.appendChild(img);
-        }
-
-        const span = document.createElement("span");
-        span.textContent = title;
-        row.appendChild(span);
-
-        row.onclick = () => {
-          ytPlayerWrapper.style.display = "block";
-          ytPlayer.loadVideoById(vid);
-        };
-
-        ytResults.appendChild(row);
-      });
-    } catch (e) {
-      console.error(e);
+  /* MUSIC SYSTEM */
+  const tracks = [
+    {
+      title: "Lofi Study",
+      tags: "lofi chill study calm",
+      url: "https://cdn.pixabay.com/download/audio/2023/03/15/audio_7d3e0b8c9b.mp3?filename=lofi-study-112191.mp3"
+    },
+    {
+      title: "Chill Ambient",
+      tags: "ambient chill background space",
+      url: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_1a1b2c3d4e.mp3?filename=ambient-110000.mp3"
+    },
+    {
+      title: "Dark Synthwave",
+      tags: "dark synthwave cyberpunk night",
+      url: "https://cdn.pixabay.com/download/audio/2023/01/10/audio_abc123xyz.mp3?filename=dark-synthwave-109999.mp3"
+    },
+    {
+      title: "Epic Trailer",
+      tags: "epic action trailer cinematic",
+      url: "https://cdn.pixabay.com/download/audio/2022/10/01/audio_1234abcd.mp3?filename=epic-trailer-108000.mp3"
+    },
+    {
+      title: "Soft Piano",
+      tags: "piano soft emotional sad calm",
+      url: "https://cdn.pixabay.com/download/audio/2021/09/01/audio_5555eeee.mp3?filename=soft-piano-107000.mp3"
     }
-  };
+  ];
+
+  const musicSearch = document.getElementById("musicSearch");
+  const musicResults = document.getElementById("musicResults");
+  const musicPlayer = document.getElementById("musicPlayer");
+  const musicSource = document.getElementById("musicSource");
+
+  function renderTracks(filter = "") {
+    const q = filter.toLowerCase().trim();
+    musicResults.innerHTML = "";
+
+    const filtered = tracks.filter(t =>
+      !q || t.title.toLowerCase().includes(q) || t.tags.toLowerCase().includes(q)
+    );
+
+    if (filtered.length === 0) {
+      musicResults.innerHTML =
+        '<div style="color:#6b72a8; padding:4px 0;">No tracks found.</div>';
+      return;
+    }
+
+    filtered.forEach(track => {
+      const row = document.createElement("div");
+      row.className = "music-row";
+      row.textContent = track.title;
+      row.onclick = () => playTrack(track.url);
+      musicResults.appendChild(row);
+    });
+  }
+
+  function playTrack(url) {
+    musicSource.src = url;
+    musicPlayer.load();
+    musicPlayer.play();
+  }
+
+  musicSearch.addEventListener("input", () => {
+    renderTracks(musicSearch.value);
+  });
+
+  renderTracks();
 </script>
 
 </body>
