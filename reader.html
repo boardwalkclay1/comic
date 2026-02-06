@@ -2,225 +2,172 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Comic Reader – PDF</title>
+  <title>Boardwalk PDF Comic Reader</title>
   <style>
     body {
       margin: 0;
       background: #05060a;
       color: #fff;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: Arial, sans-serif;
       display: flex;
       flex-direction: column;
       height: 100vh;
     }
-    header {
-      padding: 10px 16px;
+    header, footer {
+      padding: 12px 16px;
       background: #0b0d16;
       border-bottom: 1px solid #222838;
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
     }
-    header .title {
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      font-size: 13px;
-      color: #9aa4ff;
+    footer {
+      border-top: 1px solid #222838;
+      border-bottom: none;
     }
-    header .subtitle {
-      font-size: 11px;
-      color: #6f7695;
-    }
-    #viewerContainer {
+    #viewer {
       flex: 1;
       display: flex;
       justify-content: center;
       align-items: center;
       overflow: auto;
-      background: radial-gradient(circle at top, #151a2b 0, #05060a 55%);
-    }
-    #canvasWrapper {
-      box-shadow: 0 0 40px rgba(0,0,0,0.8);
-      border-radius: 8px;
-      overflow: hidden;
       background: #000;
-      max-width: 100%;
-      max-height: 100%;
     }
     canvas {
-      display: block;
       max-width: 100%;
       height: auto;
-    }
-    footer {
-      padding: 10px 16px;
-      background: #0b0d16;
-      border-top: 1px solid #222838;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-    .controls {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      box-shadow: 0 0 30px rgba(0,0,0,0.7);
     }
     button {
+      padding: 8px 16px;
       background: #1b2140;
       color: #e5e7ff;
       border: 1px solid #343c66;
-      border-radius: 999px;
-      padding: 6px 14px;
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
+      border-radius: 20px;
       cursor: pointer;
-      transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+      font-size: 12px;
+      font-weight: bold;
+      text-transform: uppercase;
     }
     button:hover {
       background: #27305a;
-      box-shadow: 0 0 12px rgba(90,110,255,0.4);
-      transform: translateY(-1px);
-    }
-    button:disabled {
-      opacity: 0.4;
-      cursor: default;
-      box-shadow: none;
-      transform: none;
     }
     .page-info {
       font-size: 12px;
       color: #9aa4ff;
-      letter-spacing: 0.08em;
       text-transform: uppercase;
-    }
-    .status {
-      font-size: 11px;
-      color: #6f7695;
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <div>
-      <div class="title">Boardwalk Comic Reader</div>
-      <div class="subtitle" id="comicName">Loaded from PDF</div>
-    </div>
-    <div class="status" id="statusText">Ready</div>
-  </header>
+<header>
+  <div>Boardwalk Comic Reader</div>
+  <div id="status">Loading…</div>
+</header>
 
-  <div id="viewerContainer">
-    <div id="canvasWrapper">
-      <canvas id="pdfCanvas"></canvas>
-    </div>
-  </div>
+<div id="viewer">
+  <canvas id="pdfCanvas"></canvas>
+</div>
 
-  <footer>
-    <div class="controls">
-      <button id="prevBtn">Prev</button>
-      <button id="nextBtn">Next</button>
-    </div>
-    <div class="page-info" id="pageInfo">Page 0 / 0</div>
-  </footer>
+<footer>
+  <button id="prevBtn">Prev</button>
+  <div class="page-info" id="pageInfo">Page 0 / 0</div>
+  <button id="nextBtn">Next</button>
+</footer>
 
-  <script type="module">
-    // 🔧 CHANGE THIS TO YOUR PDF PATH
-    // Example: "comics/gold-lake.pdf" or "assets/comics/book1.pdf"
-    const PDF_URL = "comics/your-comic.pdf";
+<script type="module">
+  import * as pdfjsLib from "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.149/pdf.min.mjs";
 
-    import * as pdfjsLib from "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.149/pdf.min.mjs";
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.149/pdf.worker.min.mjs";
 
-    pdfjsLib.GlobalWorkerOptions.workerSrc =
-      "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.149/pdf.worker.min.mjs";
+  // 🔥🔥🔥 CHANGE THIS TO THE PDF YOU WANT TO READ 🔥🔥🔥
+  // Example: "Gold%20Lake%20(1).pdf"
+  const PDF_URL = new URLSearchParams(window.location.search).get("id");
 
-    const canvas = document.getElementById("pdfCanvas");
-    const ctx = canvas.getContext("2d");
-    const prevBtn = document.getElementById("prevBtn");
-    const nextBtn = document.getElementById("nextBtn");
-    const pageInfo = document.getElementById("pageInfo");
-    const statusText = document.getElementById("statusText");
+  if (!PDF_URL) {
+    document.getElementById("status").textContent = "No PDF specified.";
+    throw new Error("Missing ?id= parameter");
+  }
 
-    let pdfDoc = null;
-    let currentPage = 1;
-    let totalPages = 0;
-    let isRendering = false;
-    let pendingPage = null;
+  const canvas = document.getElementById("pdfCanvas");
+  const ctx = canvas.getContext("2d");
+  const status = document.getElementById("status");
+  const pageInfo = document.getElementById("pageInfo");
 
-    function setStatus(text) {
-      statusText.textContent = text;
+  let pdfDoc = null;
+  let currentPage = 1;
+  let totalPages = 0;
+  let isRendering = false;
+  let pendingPage = null;
+
+  function setStatus(msg) {
+    status.textContent = msg;
+  }
+
+  function queueRenderPage(num) {
+    if (isRendering) {
+      pendingPage = num;
+    } else {
+      renderPage(num);
     }
+  }
 
-    function queueRenderPage(num) {
-      if (isRendering) {
-        pendingPage = num;
-      } else {
-        renderPage(num);
-      }
+  async function renderPage(num) {
+    isRendering = true;
+    setStatus("Rendering page " + num + "…");
+
+    const page = await pdfDoc.getPage(num);
+    const viewport = page.getViewport({ scale: 1.5 });
+
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+
+    await page.render({ canvasContext: ctx, viewport }).promise;
+
+    pageInfo.textContent = `Page ${num} / ${totalPages}`;
+    setStatus("Ready");
+
+    isRendering = false;
+
+    if (pendingPage !== null) {
+      const next = pendingPage;
+      pendingPage = null;
+      renderPage(next);
     }
+  }
 
-    async function renderPage(num) {
-      isRendering = true;
-      setStatus("Rendering page " + num + "…");
+  async function loadPdf() {
+    try {
+      setStatus("Loading PDF…");
+      const loadingTask = pdfjsLib.getDocument(PDF_URL);
+      pdfDoc = await loadingTask.promise;
 
-      const page = await pdfDoc.getPage(num);
-      const viewport = page.getViewport({ scale: 1.5 });
+      totalPages = pdfDoc.numPages;
+      currentPage = 1;
 
-      canvas.width = viewport.width;
-      canvas.height = viewport.height;
-
-      const renderContext = {
-        canvasContext: ctx,
-        viewport
-      };
-
-      await page.render(renderContext).promise;
-
-      pageInfo.textContent = `Page ${num} / ${totalPages}`;
-      setStatus("Ready");
-
-      isRendering = false;
-
-      if (pendingPage !== null) {
-        const next = pendingPage;
-        pendingPage = null;
-        renderPage(next);
-      }
+      renderPage(currentPage);
+    } catch (err) {
+      console.error(err);
+      setStatus("Failed to load PDF");
     }
+  }
 
-    async function loadPdf() {
-      try {
-        setStatus("Loading PDF…");
-        const loadingTask = pdfjsLib.getDocument(PDF_URL);
-        pdfDoc = await loadingTask.promise;
-        totalPages = pdfDoc.numPages;
-        currentPage = 1;
-        setStatus("PDF loaded");
-        renderPage(currentPage);
-      } catch (err) {
-        console.error(err);
-        setStatus("Failed to load PDF");
-      }
-    }
+  document.getElementById("prevBtn").onclick = () => {
+    if (currentPage <= 1) return;
+    currentPage--;
+    queueRenderPage(currentPage);
+  };
 
-    prevBtn.addEventListener("click", () => {
-      if (currentPage <= 1) return;
-      currentPage--;
-      queueRenderPage(currentPage);
-    });
+  document.getElementById("nextBtn").onclick = () => {
+    if (currentPage >= totalPages) return;
+    currentPage++;
+    queueRenderPage(currentPage);
+  };
 
-    nextBtn.addEventListener("click", () => {
-      if (currentPage >= totalPages) return;
-      currentPage++;
-      queueRenderPage(currentPage);
-    });
-
-    // Kick it off
-    loadPdf();
-  </script>
+  loadPdf();
+</script>
 
 </body>
 </html>
