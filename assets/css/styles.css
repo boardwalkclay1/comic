@@ -192,12 +192,11 @@ html[data-theme="villain"] {
 }
 
 /* ================================
-   READER FIX — PAGE LOCK
+   READER FIX — PAGE LOCK (FINAL)
 ================================ */
-.viewer-lock,
 #flipWrapper.locked {
   overflow: hidden !important;
-  height: 100vh !important;
+  height: auto !important;
 }
 
 /* ================================
