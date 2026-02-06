@@ -11,8 +11,6 @@ export const soundtracks = {
 // =========================
 
 const scPlayer = document.getElementById("scPlayer");
-
-// Default playlist
 scPlayer.src = soundtracks.khalid;
 
 
@@ -31,6 +29,7 @@ if (!fileName.toLowerCase().endsWith(".pdf")) fileName += ".pdf";
 
 const PDF_URL = `https://boardwalkclay1.github.io/comic/assets/books/${fileName}`;
 
+const viewer = document.getElementById("viewer");
 const pageA = document.getElementById("pageA");
 const pageB = document.getElementById("pageB");
 const ctxA = pageA.getContext("2d");
@@ -42,17 +41,32 @@ let totalPages = 0;
 let isRendering = false;
 let showingA = true;
 
+// Lock viewer during flip to prevent scroll jumps
+function lockViewer() {
+  viewer.style.height = viewer.offsetHeight + "px";
+  viewer.style.overflow = "hidden";
+}
+
+function unlockViewer() {
+  viewer.style.height = "auto";
+  viewer.style.overflow = "auto";
+}
+
 async function renderPageToCanvas(pageNum, canvas, ctx) {
   const page = await pdfDoc.getPage(pageNum);
   const viewport = page.getViewport({ scale: 3.0 });
+
   canvas.width = viewport.width;
   canvas.height = viewport.height;
+
   await page.render({ canvasContext: ctx, viewport }).promise;
 }
 
 async function flipToPage(num) {
   if (isRendering) return;
   isRendering = true;
+
+  lockViewer(); // <— FIX: prevents page jumping
 
   const front = showingA ? pageA : pageB;
   const back = showingA ? pageB : pageA;
@@ -69,7 +83,10 @@ async function flipToPage(num) {
     showingA = !showingA;
     currentPage = num;
     isRendering = false;
-    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    unlockViewer(); // <— FIX: restore scrolling AFTER animation
+
+    window.scrollTo({ top: 0, behavior: "instant" });
   }, 1400);
 }
 
