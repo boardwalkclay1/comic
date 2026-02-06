@@ -1,61 +1,91 @@
-window.addEventListener("DOMContentLoaded", async () => {
-  const params = new URLSearchParams(window.location.search);
-  const bookId = params.get("id");
+// =========================
+// SOUNDTRACK EMBEDS
+// =========================
 
-  const res = await fetch("books.json");
-  const data = await res.json();
-  const book = data.books.find(b => b.id === bookId);
+export const soundtracks = {
+  khalid: `https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/soundcloud%253Aplaylists%253A2187301982&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true`
+};
 
-  if (!book) {
-    alert("Book not found");
-    return;
-  }
+// =========================
+// LOAD PLAYLIST INTO READER
+// =========================
 
-  const canvas = document.getElementById("pageCanvas");
-  const ctx = canvas.getContext("2d");
+const scPlayer = document.getElementById("scPlayer");
 
-  let pdfBlob = null;
-  let pdfDoc = null;
-  let currentPage = 1;
-  let totalPages = 0;
+// Default playlist
+scPlayer.src = soundtracks.khalid;
 
-  // Load PDF as blob
-  const pdfResponse = await fetch(book.file);
-  pdfBlob = await pdfResponse.blob();
 
-  // Use browser's built-in PDF renderer
-  const pdf = await navigator.pdfViewer.createDocument(pdfBlob);
-  pdfDoc = pdf;
-  totalPages = pdf.numPages;
+// =========================
+// PDF READER LOGIC
+// =========================
 
-  async function renderPage(pageNum) {
-    const page = await pdfDoc.getPage(pageNum);
+import * as pdfjsLib from "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.149/pdf.min.mjs";
 
-    // Convert PDF page to bitmap image
-    const bitmap = await page.renderToBitmap();
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.149/pdf.worker.min.mjs";
 
-    canvas.width = bitmap.width;
-    canvas.height = bitmap.height;
+let fileName = new URLSearchParams(window.location.search).get("id");
+if (!fileName) throw new Error("Missing ?id=");
+if (!fileName.toLowerCase().endsWith(".pdf")) fileName += ".pdf";
 
-    ctx.drawImage(bitmap, 0, 0);
+const PDF_URL = `https://boardwalkclay1.github.io/comic/assets/books/${fileName}`;
 
-    document.getElementById("pageInfo").textContent =
-      `Page ${pageNum} of ${totalPages}`;
-  }
+const pageA = document.getElementById("pageA");
+const pageB = document.getElementById("pageB");
+const ctxA = pageA.getContext("2d");
+const ctxB = pageB.getContext("2d");
 
-  document.getElementById("nextPage").onclick = () => {
-    if (currentPage < totalPages) {
-      currentPage++;
-      renderPage(currentPage);
-    }
-  };
+let pdfDoc = null;
+let currentPage = 1;
+let totalPages = 0;
+let isRendering = false;
+let showingA = true;
 
-  document.getElementById("prevPage").onclick = () => {
-    if (currentPage > 1) {
-      currentPage--;
-      renderPage(currentPage);
-    }
-  };
+async function renderPageToCanvas(pageNum, canvas, ctx) {
+  const page = await pdfDoc.getPage(pageNum);
+  const viewport = page.getViewport({ scale: 3.0 });
+  canvas.width = viewport.width;
+  canvas.height = viewport.height;
+  await page.render({ canvasContext: ctx, viewport }).promise;
+}
 
-  renderPage(currentPage);
-});
+async function flipToPage(num) {
+  if (isRendering) return;
+  isRendering = true;
+
+  const front = showingA ? pageA : pageB;
+  const back = showingA ? pageB : pageA;
+  const backCtx = showingA ? ctxB : ctxA;
+
+  await renderPageToCanvas(num, back, backCtx);
+
+  front.classList.remove("flip");
+  back.classList.remove("flip");
+
+  requestAnimationFrame(() => back.classList.add("flip"));
+
+  setTimeout(() => {
+    showingA = !showingA;
+    currentPage = num;
+    isRendering = false;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, 1400);
+}
+
+async function loadPdf() {
+  const loadingTask = pdfjsLib.getDocument(PDF_URL);
+  pdfDoc = await loadingTask.promise;
+  totalPages = pdfDoc.numPages;
+  await renderPageToCanvas(1, pageA, ctxA);
+}
+
+document.getElementById("prevBtn").onclick = () => {
+  if (currentPage > 1) flipToPage(currentPage - 1);
+};
+
+document.getElementById("nextBtn").onclick = () => {
+  if (currentPage < totalPages) flipToPage(currentPage + 1);
+};
+
+loadPdf();
