@@ -38,9 +38,20 @@ let totalPages = 0;
 let isRendering = false;
 let showingA = true;
 
+// match this to your CSS transition duration for dramatic slow turn
+const PAGE_TURN_DURATION_MS = 1600;
 
 // =========================
-// RENDER PAGE — FIXED
+// CANVAS RESET
+// =========================
+
+function resetCanvas(canvas, ctx) {
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+// =========================
+// RENDER PAGE
 // =========================
 
 async function renderPageToCanvas(pageNum, canvas, ctx) {
@@ -52,35 +63,41 @@ async function renderPageToCanvas(pageNum, canvas, ctx) {
 
   await page.render({ canvasContext: ctx, viewport }).promise;
 
-  // ALWAYS update wrapper size — THIS FIXES THE “ONLY 2 PAGES” BUG
+  // keep wrapper stable and sized to current page
   flipWrapper.style.width = canvas.width + "px";
   flipWrapper.style.height = canvas.height + "px";
 }
 
-
 // =========================
-// PAGE FLIP — FIXED
+// PAGE FLIP (DRAMATIC, SINGLE CLICK)
 // =========================
 
 async function flipToPage(num) {
   if (isRendering) return;
+  if (num < 1 || num > totalPages) return;
+
   isRendering = true;
 
   const front = showingA ? pageA : pageB;
   const back = showingA ? pageB : pageA;
+  const frontCtx = showingA ? ctxA : ctxB;
   const backCtx = showingA ? ctxB : ctxA;
+
+  // fully reset both canvases to avoid stale transforms
+  resetCanvas(front, frontCtx);
+  resetCanvas(back, backCtx);
 
   await renderPageToCanvas(num, back, backCtx);
 
-  // Bring back page forward
+  // z-order: back comes to front
   front.style.zIndex = 1;
   back.style.zIndex = 2;
 
-  // Reset states
+  // reset classes
   front.classList.remove("visible");
   back.classList.remove("visible");
 
-  // Animate
+  // dramatic slow turn: let CSS handle easing, JS just triggers once
   requestAnimationFrame(() => {
     back.classList.add("visible");
   });
@@ -89,12 +106,11 @@ async function flipToPage(num) {
     showingA = !showingA;
     currentPage = num;
     isRendering = false;
-  }, 1200);
+  }, PAGE_TURN_DURATION_MS);
 }
 
-
 // =========================
-// LOAD FIRST PAGE — FIXED
+// LOAD FIRST PAGE
 // =========================
 
 async function loadPdf() {
@@ -108,21 +124,32 @@ async function loadPdf() {
   pageB.style.zIndex = 1;
 
   pageA.classList.add("visible");
+  showingA = true;
+  currentPage = 1;
 }
 
-
 // =========================
-// NAV BUTTONS — FIXED
+// NAV BUTTONS
 // =========================
 
-document.getElementById("prevBtn").onclick = () => {
-  if (currentPage > 1) flipToPage(currentPage - 1);
-};
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
 
-document.getElementById("nextBtn").onclick = () => {
-  if (currentPage < totalPages) flipToPage(currentPage + 1);
-};
+if (prevBtn) {
+  prevBtn.onclick = () => {
+    if (!isRendering && currentPage > 1) {
+      flipToPage(currentPage - 1);
+    }
+  };
+}
 
+if (nextBtn) {
+  nextBtn.onclick = () => {
+    if (!isRendering && currentPage < totalPages) {
+      flipToPage(currentPage + 1);
+    }
+  };
+}
 
 // =========================
 // INIT
