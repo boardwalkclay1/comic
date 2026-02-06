@@ -108,6 +108,7 @@
       padding: 8px 0;
       cursor: pointer;
       color: #cfd3ff;
+      border-bottom: 1px solid #1b2140;
     }
 
     .sc-row:hover {
@@ -121,6 +122,32 @@
       border-radius: 8px;
       margin-top: 12px;
       border: none;
+    }
+
+    /* LIBRARY SECTION */
+    #libraryTitle {
+      margin-top: 30px;
+      font-size: 18px;
+      color: #7aa2ff;
+    }
+
+    #scLibrary {
+      margin-top: 12px;
+      max-height: 200px;
+      overflow-y: auto;
+      border-top: 1px solid #343c66;
+      padding-top: 10px;
+    }
+
+    .lib-row {
+      padding: 8px 0;
+      cursor: pointer;
+      color: #cfd3ff;
+      border-bottom: 1px solid #1b2140;
+    }
+
+    .lib-row:hover {
+      color: #fff;
     }
   </style>
 </head>
@@ -139,7 +166,9 @@
   <div class="navBtn" id="nextBtn">Next</div>
 </div>
 
+<!-- FULL REAL SOUNDCLOUD SYSTEM -->
 <div id="scSection">
+
   <input id="scSearch" placeholder="Search SoundCloud…">
   <div id="scResults"></div>
 
@@ -149,6 +178,10 @@
     frameborder="no"
     allow="autoplay">
   </iframe>
+
+  <div id="libraryTitle">Your Saved Tracks</div>
+  <div id="scLibrary"></div>
+
 </div>
 
 <script type="module">
@@ -188,12 +221,9 @@
 
   async function renderPageToCanvas(pageNum, canvas, ctx) {
     const page = await pdfDoc.getPage(pageNum);
-
-    const viewport = page.getViewport({ scale: 3.0 }); // SHARP TEXT
-
+    const viewport = page.getViewport({ scale: 3.0 });
     canvas.width = viewport.width;
     canvas.height = viewport.height;
-
     await page.render({ canvasContext: ctx, viewport }).promise;
   }
 
@@ -223,9 +253,7 @@
   async function loadPdf() {
     const loadingTask = pdfjsLib.getDocument(PDF_URL);
     pdfDoc = await loadingTask.promise;
-
     totalPages = pdfDoc.numPages;
-
     await renderPageToCanvas(1, pageA, ctxA);
   }
 
@@ -239,20 +267,80 @@
 
   loadPdf();
 
-  /* REAL SOUNDCLOUD SEARCH (NO API KEY) */
+  /* REAL SOUNDCLOUD SEARCH + EMBED (NO API KEY) */
   const scSearch = document.getElementById("scSearch");
   const scResults = document.getElementById("scResults");
   const scPlayer = document.getElementById("scPlayer");
+  const scLibrary = document.getElementById("scLibrary");
 
-  scSearch.addEventListener("input", () => {
-    const q = scSearch.value.trim();
-    if (!q) return;
+  async function searchSoundCloud(query) {
+    scResults.innerHTML = `<div class="sc-row">Searching…</div>`;
 
-    scResults.innerHTML = `
-      <div class="sc-row" onclick="scPlayer.src='https://w.soundcloud.com/player/?url=https://soundcloud.com/search?q=${encodeURIComponent(q)}&color=%23ff5500&auto_play=true'">
-        Search: ${q}
-      </div>
-    `;
+    const url = `https://corsproxy.io/?https://soundcloud.com/search?q=${encodeURIComponent(query)}`;
+    const html = await fetch(url).then(r => r.text());
+
+    const trackRegex = /https:\/\/soundcloud\.com\/[^"]+/g;
+    const matches = [...html.matchAll(trackRegex)];
+
+    const unique = [...new Set(matches.map(m => m[0]))].slice(0, 10);
+
+    if (unique.length === 0) {
+      scResults.innerHTML = `<div class="sc-row">No results found.</div>`;
+      return;
+    }
+
+    scResults.innerHTML = "";
+
+    unique.forEach(link => {
+      const row = document.createElement("div");
+      row.className = "sc-row";
+      row.textContent = link;
+      row.onclick = () => loadSoundCloudTrack(link);
+      scResults.appendChild(row);
+    });
+  }
+
+  async function loadSoundCloudTrack(trackUrl) {
+    const oembedUrl =
+      `https://soundcloud.com/oembed?format=json&url=${encodeURIComponent(trackUrl)}`;
+
+    const data = await fetch(oembedUrl).then(r => r.json());
+
+    const iframeMatch = data.html.match(/src="([^"]+)"/);
+    if (!iframeMatch) return;
+
+    scPlayer.src = iframeMatch[1] + "&auto_play=true";
+
+    saveTrack(trackUrl);
+    loadLibrary();
+  }
+
+  function saveTrack(url) {
+    const saved = JSON.parse(localStorage.getItem("scSaved") || "[]");
+    if (!saved.includes(url)) {
+      saved.push(url);
+      localStorage.setItem("scSaved", JSON.stringify(saved));
+    }
+  }
+
+  function loadLibrary() {
+    const saved = JSON.parse(localStorage.getItem("scSaved") || "[]");
+
+    scLibrary.innerHTML = "";
+
+    saved.forEach(url => {
+      const row = document.createElement("div");
+      row.className = "lib-row";
+      row.textContent = url;
+      row.onclick = () => loadSoundCloudTrack(url);
+      scLibrary.appendChild(row);
+    });
+  }
+
+  loadLibrary();
+
+  scSearch.addEventListener("keydown", e => {
+    if (e.key === "Enter") searchSoundCloud(scSearch.value.trim());
   });
 </script>
 
