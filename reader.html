@@ -18,6 +18,7 @@
       overflow-x: hidden;
     }
 
+    /* FULL SIZE COMIC */
     #viewer {
       min-height: 100vh;
       display: flex;
@@ -49,6 +50,7 @@
       box-shadow: -40px 0 80px rgba(0,0,0,0.8);
     }
 
+    /* FLOATING NAV BUTTONS */
     #navButtons {
       position: fixed;
       top: 20px;
@@ -109,16 +111,26 @@
 
 <!-- SOUNDTRACK EMBED -->
 <div id="musicSection">
+
   <iframe 
     id="scPlayer"
-    scrolling="no"
-    frameborder="no"
-    allow="autoplay">
+    width="100%" 
+    height="300" 
+    scrolling="no" 
+    frameborder="no" 
+    allow="autoplay"
+    src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/soundcloud%253Aplaylists%253A2187301982&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true">
   </iframe>
+
+  <div style="font-size: 10px; color: #cccccc; line-break: anywhere; word-break: normal; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif; font-weight: 100;">
+    <a href="https://soundcloud.com/clayvonte-broach-636163207" title="Clayvonte Broach" target="_blank" style="color: #cccccc; text-decoration: none;">Clayvonte Broach</a> · 
+    <a href="https://soundcloud.com/clayvonte-broach-636163207/sets/khalid" title="khalid" target="_blank" style="color: #cccccc; text-decoration: none;">khalid</a>
+  </div>
+
 </div>
 
-<!-- LOAD JS FROM assets/js/reader.js -->
-<script type="module" src="assets/js/reader.js"></script>
+<!-- FIXED: DEFER LOADING -->
+<script defer type="module" src="assets/js/reader.js"></script>
 
 </body>
 </html>
