@@ -18,7 +18,6 @@
       overflow-x: hidden;
     }
 
-    /* FULL SIZE COMIC */
     #viewer {
       min-height: 100vh;
       display: flex;
@@ -27,7 +26,7 @@
       background: #000;
       overflow-y: auto;
       padding-top: 40px;
-      padding-bottom: 120px;
+      padding-bottom: 200px;
     }
 
     #flipWrapper {
@@ -50,7 +49,6 @@
       box-shadow: -40px 0 80px rgba(0,0,0,0.8);
     }
 
-    /* FLOATING NAV BUTTONS */
     #navButtons {
       position: fixed;
       top: 20px;
@@ -77,77 +75,20 @@
       background: var(--theme-accent);
     }
 
-    /* SOUNDCLOUD SECTION */
-    #scSection {
-      padding: 30px;
+    /* MUSIC SECTION */
+    #musicSection {
+      padding: 20px;
       background: #05060f;
       border-top: 1px solid #222;
       text-align: center;
     }
 
-    #scSearch {
-      width: 90%;
-      max-width: 360px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      border: 1px solid #343c66;
-      background: #02030a;
-      color: #e5e7ff;
-      font-size: 14px;
-      outline: none;
-    }
-
-    #scResults {
-      margin-top: 12px;
-      max-height: 260px;
-      overflow-y: auto;
-      font-size: 14px;
-    }
-
-    .sc-row {
-      padding: 8px 0;
-      cursor: pointer;
-      color: #cfd3ff;
-      border-bottom: 1px solid #1b2140;
-    }
-
-    .sc-row:hover {
-      color: #ffffff;
-    }
-
     #scPlayer {
       width: 100%;
-      max-width: 500px;
-      height: 166px;
-      border-radius: 8px;
-      margin-top: 12px;
+      max-width: 900px;
+      height: 300px;
       border: none;
-    }
-
-    /* LIBRARY SECTION */
-    #libraryTitle {
-      margin-top: 30px;
-      font-size: 18px;
-      color: #7aa2ff;
-    }
-
-    #scLibrary {
-      margin-top: 12px;
-      max-height: 200px;
-      overflow-y: auto;
-      border-top: 1px solid #343c66;
-      padding-top: 10px;
-    }
-
-    .lib-row {
-      padding: 8px 0;
-      cursor: pointer;
-      color: #cfd3ff;
-      border-bottom: 1px solid #1b2140;
-    }
-
-    .lib-row:hover {
-      color: #fff;
+      border-radius: 10px;
     }
   </style>
 </head>
@@ -166,183 +107,17 @@
   <div class="navBtn" id="nextBtn">Next</div>
 </div>
 
-<!-- FULL REAL SOUNDCLOUD SYSTEM -->
-<div id="scSection">
-
-  <input id="scSearch" placeholder="Search SoundCloud…">
-  <div id="scResults"></div>
-
+<!-- YOUR PLAYLIST EMBED -->
+<div id="musicSection">
   <iframe 
     id="scPlayer"
     scrolling="no"
     frameborder="no"
     allow="autoplay">
   </iframe>
-
-  <div id="libraryTitle">Your Saved Tracks</div>
-  <div id="scLibrary"></div>
-
 </div>
 
-<script type="module">
-  import * as pdfjsLib from "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.149/pdf.min.mjs";
-
-  pdfjsLib.GlobalWorkerOptions.workerSrc =
-    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.149/pdf.worker.min.mjs";
-
-  const comicThemes = {
-    "gold-lake-1": "#2a4dff",
-    "gold-lake-2": "#2a4dff",
-    "new-civil-war-1": "#ff2a2a",
-    "new-civil-war-2": "#ff2a2a",
-    "new-civil-war-3": "#ff2a2a"
-  };
-
-  let fileName = new URLSearchParams(window.location.search).get("id");
-  if (!fileName) throw new Error("Missing ?id=");
-  if (!fileName.toLowerCase().endsWith(".pdf")) fileName += ".pdf";
-
-  const baseName = fileName.replace(".pdf", "");
-  const themeColor = comicThemes[baseName] || "#343c66";
-  document.documentElement.style.setProperty("--theme-accent", themeColor);
-
-  const PDF_URL = `https://boardwalkclay1.github.io/comic/assets/books/${fileName}`;
-
-  const pageA = document.getElementById("pageA");
-  const pageB = document.getElementById("pageB");
-  const ctxA = pageA.getContext("2d");
-  const ctxB = pageB.getContext("2d");
-
-  let pdfDoc = null;
-  let currentPage = 1;
-  let totalPages = 0;
-  let isRendering = false;
-  let showingA = true;
-
-  async function renderPageToCanvas(pageNum, canvas, ctx) {
-    const page = await pdfDoc.getPage(pageNum);
-    const viewport = page.getViewport({ scale: 3.0 });
-    canvas.width = viewport.width;
-    canvas.height = viewport.height;
-    await page.render({ canvasContext: ctx, viewport }).promise;
-  }
-
-  async function flipToPage(num) {
-    if (isRendering) return;
-    isRendering = true;
-
-    const front = showingA ? pageA : pageB;
-    const back = showingA ? pageB : pageA;
-    const backCtx = showingA ? ctxB : ctxA;
-
-    await renderPageToCanvas(num, back, backCtx);
-
-    front.classList.remove("flip");
-    back.classList.remove("flip");
-
-    requestAnimationFrame(() => back.classList.add("flip"));
-
-    setTimeout(() => {
-      showingA = !showingA;
-      currentPage = num;
-      isRendering = false;
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }, 1400);
-  }
-
-  async function loadPdf() {
-    const loadingTask = pdfjsLib.getDocument(PDF_URL);
-    pdfDoc = await loadingTask.promise;
-    totalPages = pdfDoc.numPages;
-    await renderPageToCanvas(1, pageA, ctxA);
-  }
-
-  document.getElementById("prevBtn").onclick = () => {
-    if (currentPage > 1) flipToPage(currentPage - 1);
-  };
-
-  document.getElementById("nextBtn").onclick = () => {
-    if (currentPage < totalPages) flipToPage(currentPage + 1);
-  };
-
-  loadPdf();
-
-  /* REAL SOUNDCLOUD SEARCH + EMBED (NO API KEY) */
-  const scSearch = document.getElementById("scSearch");
-  const scResults = document.getElementById("scResults");
-  const scPlayer = document.getElementById("scPlayer");
-  const scLibrary = document.getElementById("scLibrary");
-
-  async function searchSoundCloud(query) {
-    scResults.innerHTML = `<div class="sc-row">Searching…</div>`;
-
-    const url = `https://corsproxy.io/?https://soundcloud.com/search?q=${encodeURIComponent(query)}`;
-    const html = await fetch(url).then(r => r.text());
-
-    const trackRegex = /https:\/\/soundcloud\.com\/[^"]+/g;
-    const matches = [...html.matchAll(trackRegex)];
-
-    const unique = [...new Set(matches.map(m => m[0]))].slice(0, 10);
-
-    if (unique.length === 0) {
-      scResults.innerHTML = `<div class="sc-row">No results found.</div>`;
-      return;
-    }
-
-    scResults.innerHTML = "";
-
-    unique.forEach(link => {
-      const row = document.createElement("div");
-      row.className = "sc-row";
-      row.textContent = link;
-      row.onclick = () => loadSoundCloudTrack(link);
-      scResults.appendChild(row);
-    });
-  }
-
-  async function loadSoundCloudTrack(trackUrl) {
-    const oembedUrl =
-      `https://soundcloud.com/oembed?format=json&url=${encodeURIComponent(trackUrl)}`;
-
-    const data = await fetch(oembedUrl).then(r => r.json());
-
-    const iframeMatch = data.html.match(/src="([^"]+)"/);
-    if (!iframeMatch) return;
-
-    scPlayer.src = iframeMatch[1] + "&auto_play=true";
-
-    saveTrack(trackUrl);
-    loadLibrary();
-  }
-
-  function saveTrack(url) {
-    const saved = JSON.parse(localStorage.getItem("scSaved") || "[]");
-    if (!saved.includes(url)) {
-      saved.push(url);
-      localStorage.setItem("scSaved", JSON.stringify(saved));
-    }
-  }
-
-  function loadLibrary() {
-    const saved = JSON.parse(localStorage.getItem("scSaved") || "[]");
-
-    scLibrary.innerHTML = "";
-
-    saved.forEach(url => {
-      const row = document.createElement("div");
-      row.className = "lib-row";
-      row.textContent = url;
-      row.onclick = () => loadSoundCloudTrack(url);
-      scLibrary.appendChild(row);
-    });
-  }
-
-  loadLibrary();
-
-  scSearch.addEventListener("keydown", e => {
-    if (e.key === "Enter") searchSoundCloud(scSearch.value.trim());
-  });
-</script>
+<script type="module" src="reader.js"></script>
 
 </body>
 </html>
