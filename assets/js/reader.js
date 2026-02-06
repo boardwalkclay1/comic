@@ -1,14 +1,10 @@
 // =========================
-// SOUNDTRACK EMBEDS
+// SOUNDTRACK EMBED
 // =========================
 
 export const soundtracks = {
   khalid: `https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/soundcloud%253Aplaylists%253A2187301982&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true`
 };
-
-// =========================
-// LOAD PLAYLIST INTO READER
-// =========================
 
 const scPlayer = document.getElementById("scPlayer");
 scPlayer.src = soundtracks.khalid;
@@ -29,7 +25,7 @@ if (!fileName.toLowerCase().endsWith(".pdf")) fileName += ".pdf";
 
 const PDF_URL = `https://boardwalkclay1.github.io/comic/assets/books/${fileName}`;
 
-const viewer = document.getElementById("viewer");
+const wrapper = document.getElementById("flipWrapper");
 const pageA = document.getElementById("pageA");
 const pageB = document.getElementById("pageB");
 const ctxA = pageA.getContext("2d");
@@ -41,16 +37,23 @@ let totalPages = 0;
 let isRendering = false;
 let showingA = true;
 
-// Lock viewer during flip to prevent scroll jumps
-function lockViewer() {
-  viewer.style.height = viewer.offsetHeight + "px";
-  viewer.style.overflow = "hidden";
+
+// =========================
+// PAGE LOCK — FINAL FIX
+// =========================
+
+function lockFlip() {
+  wrapper.classList.add("locked");
 }
 
-function unlockViewer() {
-  viewer.style.height = "auto";
-  viewer.style.overflow = "auto";
+function unlockFlip() {
+  wrapper.classList.remove("locked");
 }
+
+
+// =========================
+// RENDER PAGE
+// =========================
 
 async function renderPageToCanvas(pageNum, canvas, ctx) {
   const page = await pdfDoc.getPage(pageNum);
@@ -62,11 +65,16 @@ async function renderPageToCanvas(pageNum, canvas, ctx) {
   await page.render({ canvasContext: ctx, viewport }).promise;
 }
 
+
+// =========================
+// PAGE FLIP — FINAL FIX
+// =========================
+
 async function flipToPage(num) {
   if (isRendering) return;
   isRendering = true;
 
-  lockViewer(); // <— FIX: prevents page jumping
+  lockFlip(); // keeps page in place
 
   const front = showingA ? pageA : pageB;
   const back = showingA ? pageB : pageA;
@@ -84,18 +92,29 @@ async function flipToPage(num) {
     currentPage = num;
     isRendering = false;
 
-    unlockViewer(); // <— FIX: restore scrolling AFTER animation
+    unlockFlip(); // unlock after animation
 
     window.scrollTo({ top: 0, behavior: "instant" });
   }, 1400);
 }
 
+
+// =========================
+// LOAD PDF
+// =========================
+
 async function loadPdf() {
   const loadingTask = pdfjsLib.getDocument(PDF_URL);
   pdfDoc = await loadingTask.promise;
   totalPages = pdfDoc.numPages;
+
   await renderPageToCanvas(1, pageA, ctxA);
 }
+
+
+// =========================
+// NAV BUTTONS
+// =========================
 
 document.getElementById("prevBtn").onclick = () => {
   if (currentPage > 1) flipToPage(currentPage - 1);
@@ -104,5 +123,10 @@ document.getElementById("prevBtn").onclick = () => {
 document.getElementById("nextBtn").onclick = () => {
   if (currentPage < totalPages) flipToPage(currentPage + 1);
 };
+
+
+// =========================
+// INIT
+// =========================
 
 loadPdf();
