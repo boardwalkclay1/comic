@@ -77,15 +77,15 @@
       background: var(--theme-accent);
     }
 
-    /* YOUTUBE SECTION */
-    #ytSection {
+    /* SOUNDCLOUD SECTION */
+    #scSection {
       padding: 30px;
       background: #05060f;
       border-top: 1px solid #222;
       text-align: center;
     }
 
-    #ytSearch {
+    #scSearch {
       width: 90%;
       max-width: 360px;
       padding: 8px 12px;
@@ -97,29 +97,30 @@
       outline: none;
     }
 
-    #ytResults {
+    #scResults {
       margin-top: 12px;
       max-height: 260px;
       overflow-y: auto;
       font-size: 14px;
     }
 
-    .yt-row {
+    .sc-row {
       padding: 8px 0;
       cursor: pointer;
       color: #cfd3ff;
     }
 
-    .yt-row:hover {
+    .sc-row:hover {
       color: #ffffff;
     }
 
-    #ytFrame {
-      width: 360px;
-      height: 220px;
+    #scPlayer {
+      width: 100%;
+      max-width: 500px;
+      height: 166px;
       border-radius: 8px;
-      border: 1px solid #343c66;
       margin-top: 12px;
+      border: none;
     }
   </style>
 </head>
@@ -138,17 +139,15 @@
   <div class="navBtn" id="nextBtn">Next</div>
 </div>
 
-<div id="ytSection">
-  <input id="ytSearch" placeholder="Search YouTube…">
-  <div id="ytResults"></div>
+<div id="scSection">
+  <input id="scSearch" placeholder="Search SoundCloud…">
+  <div id="scResults"></div>
 
   <iframe 
-    id="ytFrame"
-    src=""
-    title="YouTube player"
-    frameborder="0"
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-    allowfullscreen>
+    id="scPlayer"
+    scrolling="no"
+    frameborder="no"
+    allow="autoplay">
   </iframe>
 </div>
 
@@ -240,20 +239,18 @@
 
   loadPdf();
 
-  /* REAL YOUTUBE SEARCH (NO API KEY) */
-  const ytSearch = document.getElementById("ytSearch");
-  const ytResults = document.getElementById("ytResults");
-  const ytFrame = document.getElementById("ytFrame");
+  /* REAL SOUNDCLOUD SEARCH (NO API KEY) */
+  const scSearch = document.getElementById("scSearch");
+  const scResults = document.getElementById("scResults");
+  const scPlayer = document.getElementById("scPlayer");
 
-  ytSearch.addEventListener("input", async () => {
-    const q = ytSearch.value.trim();
+  scSearch.addEventListener("input", () => {
+    const q = scSearch.value.trim();
     if (!q) return;
 
-    const searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`;
-
-    ytResults.innerHTML = `
-      <div class="yt-row" onclick="ytFrame.src='https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(q)}'">
-        Play: ${q}
+    scResults.innerHTML = `
+      <div class="sc-row" onclick="scPlayer.src='https://w.soundcloud.com/player/?url=https://soundcloud.com/search?q=${encodeURIComponent(q)}&color=%23ff5500&auto_play=true'">
+        Search: ${q}
       </div>
     `;
   });
