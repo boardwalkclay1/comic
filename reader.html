@@ -18,6 +18,7 @@
       display: flex;
       flex-direction: column;
       height: 100vh;
+      overflow-x: hidden;
     }
 
     header, footer {
@@ -27,6 +28,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      z-index: 10;
     }
 
     footer {
@@ -38,16 +40,18 @@
       flex: 1;
       display: flex;
       justify-content: center;
-      align-items: flex-start;
-      overflow: auto;
+      align-items: center;
+      overflow: hidden;
       background: #000;
-      padding: 10px 0;
+      height: calc(100vh - 140px);
+      position: relative;
     }
 
     #flipWrapper {
       position: relative;
       display: inline-block;
       perspective: 2000px;
+      height: 100%;
     }
 
     .pageCanvas {
@@ -55,6 +59,8 @@
       top: 0;
       left: 50%;
       transform: translateX(-50%);
+      height: 100%;
+      width: auto;
       transition: transform 0.6s ease, box-shadow 0.6s ease;
       transform-origin: left center;
       backface-visibility: hidden;
@@ -87,47 +93,19 @@
       text-transform: uppercase;
     }
 
-    /* MUSIC SECTION */
-    #musicSection {
-      padding: 15px;
+    /* YOUTUBE SECTION */
+    #ytSection {
+      padding: 20px;
       background: #05060f;
       border-top: 1px solid #222;
+      text-align: center;
     }
 
-    #musicSearch {
-      width: 100%;
-      max-width: 360px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid #343c66;
-      background: #02030a;
-      color: #e5e7ff;
-      font-size: 12px;
-      outline: none;
-    }
-
-    #musicResults {
-      margin-top: 8px;
-      max-height: 140px;
-      overflow-y: auto;
-      font-size: 12px;
-    }
-
-    .music-row {
-      padding: 4px 0;
-      cursor: pointer;
-      color: #cfd3ff;
-    }
-
-    .music-row:hover {
-      color: #ffffff;
-    }
-
-    #musicPlayer {
-      margin-top: 10px;
-      width: 100%;
-      max-width: 360px;
+    #ytFrame {
+      width: 360px;
+      height: 200px;
       border-radius: 8px;
+      border: 1px solid #343c66;
     }
   </style>
 </head>
@@ -146,14 +124,16 @@
   </div>
 </div>
 
-<!-- MUSIC SECTION -->
-<div id="musicSection">
-  <input id="musicSearch" placeholder="Search music…">
-  <div id="musicResults"></div>
-
-  <audio id="musicPlayer" controls>
-    <source id="musicSource" src="" type="audio/mpeg">
-  </audio>
+<!-- YOUTUBE PLAYER -->
+<div id="ytSection">
+  <iframe 
+    id="ytFrame"
+    src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+    title="YouTube video player"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowfullscreen>
+  </iframe>
 </div>
 
 <footer>
@@ -210,10 +190,13 @@
     const page = await pdfDoc.getPage(pageNum);
     const viewport = page.getViewport({ scale: 1.5 });
 
-    canvas.width = viewport.width;
-    canvas.height = viewport.height;
+    const scale = (window.innerHeight - 140) / viewport.height;
+    const scaledViewport = page.getViewport({ scale });
 
-    await page.render({ canvasContext: ctx, viewport }).promise;
+    canvas.width = scaledViewport.width;
+    canvas.height = scaledViewport.height;
+
+    await page.render({ canvasContext: ctx, viewport: scaledViewport }).promise;
   }
 
   async function flipToPage(num) {
@@ -237,6 +220,8 @@
       currentPage = num;
       pageInfo.textContent = `Page ${currentPage} / ${totalPages}`;
       isRendering = false;
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }, 600);
   }
 
@@ -261,75 +246,6 @@
   };
 
   loadPdf();
-
-  /* MUSIC SYSTEM */
-  const tracks = [
-    {
-      title: "Lofi Study",
-      tags: "lofi chill study calm",
-      url: "https://cdn.pixabay.com/download/audio/2022/10/03/audio_4f1b1b7f3e.mp3?filename=lofi-study-122191.mp3"
-    },
-    {
-      title: "Chill Ambient",
-      tags: "ambient chill background space",
-      url: "https://cdn.pixabay.com/download/audio/2021/09/30/audio_3b2e1c7d2a.mp3?filename=ambient-chill-98765.mp3"
-    },
-    {
-      title: "Dark Synthwave",
-      tags: "dark synthwave cyberpunk night",
-      url: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_9a8c7d6e5f.mp3?filename=dark-synthwave-112233.mp3"
-    },
-    {
-      title: "Epic Trailer",
-      tags: "epic action trailer cinematic",
-      url: "https://cdn.pixabay.com/download/audio/2021/11/15/audio_1c2b3a4d5e.mp3?filename=epic-trailer-556677.mp3"
-    },
-    {
-      title: "Soft Piano",
-      tags: "piano soft emotional sad calm",
-      url: "https://cdn.pixabay.com/download/audio/2022/01/20/audio_7e6d5c4b3a.mp3?filename=soft-piano-778899.mp3"
-    }
-  ];
-
-  const musicSearch = document.getElementById("musicSearch");
-  const musicResults = document.getElementById("musicResults");
-  const musicPlayer = document.getElementById("musicPlayer");
-  const musicSource = document.getElementById("musicSource");
-
-  function renderTracks(filter = "") {
-    const q = filter.toLowerCase().trim();
-    musicResults.innerHTML = "";
-
-    const filtered = tracks.filter(t =>
-      !q || t.title.toLowerCase().includes(q) || t.tags.toLowerCase().includes(q)
-    );
-
-    if (filtered.length === 0) {
-      musicResults.innerHTML =
-        '<div style="color:#6b72a8; padding:4px 0;">No tracks found.</div>';
-      return;
-    }
-
-    filtered.forEach(track => {
-      const row = document.createElement("div");
-      row.className = "music-row";
-      row.textContent = track.title;
-      row.onclick = () => playTrack(track.url);
-      musicResults.appendChild(row);
-    });
-  }
-
-  function playTrack(url) {
-    musicSource.src = url;
-    musicPlayer.load();
-    musicPlayer.play();
-  }
-
-  musicSearch.addEventListener("input", () => {
-    renderTracks(musicSearch.value);
-  });
-
-  renderTracks();
 </script>
 
 </body>
