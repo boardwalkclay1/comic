@@ -1,136 +1,106 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>Boardwalk Comic Reader</title>
+// =========================
+// SOUNDTRACK EMBED
+// =========================
 
-  <style>
-    :root {
-      --theme-bg: #05060a;
-      --theme-accent: #343c66;
-    }
+export const soundtracks = {
+  khalid: `https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/soundcloud%253Aplaylists%253A2187301982&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true`
+};
 
-    body {
-      margin: 0;
-      background: var(--theme-bg);
-      color: #fff;
-      font-family: Arial, sans-serif;
-      overflow-x: hidden;
-    }
+const scPlayer = document.getElementById("scPlayer");
+scPlayer.src = soundtracks.khalid;
 
-    /* FULL SIZE COMIC */
-    #viewer {
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      background: #000;
-      overflow-y: auto;
-      padding-top: 40px;
-      padding-bottom: 200px;
-    }
 
-    #flipWrapper {
-      position: relative;
-      display: inline-block;
-      perspective: 2000px;
-    }
+// =========================
+// PDF READER LOGIC
+// =========================
 
-    .pageCanvas {
-      width: 100%;
-      max-width: 900px;
-      height: auto;
-      transition: transform 1.4s ease, box-shadow 1.4s ease;
-      transform-origin: left center;
-      backface-visibility: hidden;
-    }
+import * as pdfjsLib from "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.149/pdf.min.mjs";
 
-    .flip {
-      transform: rotateY(-180deg);
-      box-shadow: -40px 0 80px rgba(0,0,0,0.8);
-    }
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.149/pdf.worker.min.mjs";
 
-    /* FLOATING NAV BUTTONS */
-    #navButtons {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      z-index: 50;
-    }
+let fileName = new URLSearchParams(window.location.search).get("id");
+if (!fileName) throw new Error("Missing ?id=");
+if (!fileName.toLowerCase().endsWith(".pdf")) fileName += ".pdf";
 
-    .navBtn {
-      padding: 10px 20px;
-      background: #1b2140;
-      color: #e5e7ff;
-      border: 1px solid var(--theme-accent);
-      border-radius: 20px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: bold;
-      text-transform: uppercase;
-    }
+const PDF_URL = `https://boardwalkclay1.github.io/comic/assets/books/${fileName}`;
 
-    .navBtn:hover {
-      background: var(--theme-accent);
-    }
+const flipWrapper = document.getElementById("flipWrapper");
+const pageA = document.getElementById("pageA");
+const pageB = document.getElementById("pageB");
+const ctxA = pageA.getContext("2d");
+const ctxB = pageB.getContext("2d");
 
-    /* MUSIC SECTION */
-    #musicSection {
-      padding: 20px;
-      background: #05060f;
-      border-top: 1px solid #222;
-      text-align: center;
-    }
+let pdfDoc = null;
+let currentPage = 1;
+let totalPages = 0;
+let isRendering = false;
+let showingA = true;
 
-    #scPlayer {
-      width: 100%;
-      max-width: 900px;
-      height: 300px;
-      border: none;
-      border-radius: 10px;
-    }
-  </style>
-</head>
+async function renderPageToCanvas(pageNum, canvas, ctx) {
+  const page = await pdfDoc.getPage(pageNum);
+  const viewport = page.getViewport({ scale: 3.0 });
 
-<body>
+  canvas.width = viewport.width;
+  canvas.height = viewport.height;
 
-<div id="viewer">
-  <div id="flipWrapper">
-    <canvas id="pageA" class="pageCanvas"></canvas>
-    <canvas id="pageB" class="pageCanvas"></canvas>
-  </div>
-</div>
+  await page.render({ canvasContext: ctx, viewport }).promise;
 
-<div id="navButtons">
-  <div class="navBtn" id="prevBtn">Prev</div>
-  <div class="navBtn" id="nextBtn">Next</div>
-</div>
+  // Make wrapper match first page height so it never jumps
+  if (pageNum === 1) {
+    flipWrapper.style.width = canvas.style.width || canvas.width + "px";
+    flipWrapper.style.height = canvas.style.height || canvas.height + "px";
+  }
+}
 
-<!-- SOUNDTRACK EMBED -->
-<div id="musicSection">
+async function flipToPage(num) {
+  if (isRendering) return;
+  isRendering = true;
 
-  <iframe 
-    id="scPlayer"
-    width="100%" 
-    height="300" 
-    scrolling="no" 
-    frameborder="no" 
-    allow="autoplay"
-    src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/soundcloud%253Aplaylists%253A2187301982&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true">
-  </iframe>
+  const front = showingA ? pageA : pageB;
+  const back = showingA ? pageB : pageA;
+  const backCtx = showingA ? ctxB : ctxA;
 
-  <div style="font-size: 10px; color: #cccccc; line-break: anywhere; word-break: normal; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif; font-weight: 100;">
-    <a href="https://soundcloud.com/clayvonte-broach-636163207" title="Clayvonte Broach" target="_blank" style="color: #cccccc; text-decoration: none;">Clayvonte Broach</a> · 
-    <a href="https://soundcloud.com/clayvonte-broach-636163207/sets/khalid" title="khalid" target="_blank" style="color: #cccccc; text-decoration: none;">khalid</a>
-  </div>
+  await renderPageToCanvas(num, back, backCtx);
 
-</div>
+  // front goes away, back comes to front
+  front.style.zIndex = 1;
+  back.style.zIndex = 2;
 
-<!-- FIXED: DEFER LOADING -->
-<script defer type="module" src="assets/js/reader.js"></script>
+  // reset transforms
+  front.classList.remove("flip");
+  back.classList.remove("flip");
 
-</body>
-</html>
+  // back rotates into view
+  requestAnimationFrame(() => {
+    back.classList.add("flip");
+  });
+
+  setTimeout(() => {
+    showingA = !showingA;
+    currentPage = num;
+    isRendering = false;
+  }, 1400);
+}
+
+async function loadPdf() {
+  const loadingTask = pdfjsLib.getDocument(PDF_URL);
+  pdfDoc = await loadingTask.promise;
+  totalPages = pdfDoc.numPages;
+
+  // initial page on A, B prepped as back
+  await renderPageToCanvas(1, pageA, ctxA);
+  pageA.style.zIndex = 2;
+  pageB.style.zIndex = 1;
+  pageA.classList.add("flip");
+}
+
+document.getElementById("prevBtn").onclick = () => {
+  if (currentPage > 1) flipToPage(currentPage - 1);
+};
+
+document.getElementById("nextBtn").onclick = () => {
+  if (currentPage < totalPages) flipToPage(currentPage + 1);
+};
+
+loadPdf();
