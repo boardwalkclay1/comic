@@ -39,7 +39,7 @@ let showingA = true;
 
 
 // =========================
-// PAGE LOCK — FINAL FIX
+// PAGE LOCK — REAL FIX
 // =========================
 
 function lockFlip() {
@@ -74,7 +74,8 @@ async function flipToPage(num) {
   if (isRendering) return;
   isRendering = true;
 
-  lockFlip(); // keeps page in place
+  // THIS is what keeps the comic from moving
+  lockFlip();
 
   const front = showingA ? pageA : pageB;
   const back = showingA ? pageB : pageA;
@@ -92,8 +93,9 @@ async function flipToPage(num) {
     currentPage = num;
     isRendering = false;
 
-    unlockFlip(); // unlock after animation
+    unlockFlip();
 
+    // Keep the comic EXACTLY in place
     window.scrollTo({ top: 0, behavior: "instant" });
   }, 1400);
 }
