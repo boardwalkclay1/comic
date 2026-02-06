@@ -38,7 +38,11 @@ let totalPages = 0;
 let isRendering = false;
 let showingA = true;
 
-// Render a page into a canvas
+
+// =========================
+// RENDER PAGE — FIXED
+// =========================
+
 async function renderPageToCanvas(pageNum, canvas, ctx) {
   const page = await pdfDoc.getPage(pageNum);
   const viewport = page.getViewport({ scale: 3.0 });
@@ -48,14 +52,16 @@ async function renderPageToCanvas(pageNum, canvas, ctx) {
 
   await page.render({ canvasContext: ctx, viewport }).promise;
 
-  // Set wrapper size once so layout doesn't jump
-  if (!flipWrapper.style.width || !flipWrapper.style.height) {
-    flipWrapper.style.width = canvas.width + "px";
-    flipWrapper.style.height = canvas.height + "px";
-  }
+  // ALWAYS update wrapper size — THIS FIXES THE “ONLY 2 PAGES” BUG
+  flipWrapper.style.width = canvas.width + "px";
+  flipWrapper.style.height = canvas.height + "px";
 }
 
-// Flip to a given page number
+
+// =========================
+// PAGE FLIP — FIXED
+// =========================
+
 async function flipToPage(num) {
   if (isRendering) return;
   isRendering = true;
@@ -66,15 +72,15 @@ async function flipToPage(num) {
 
   await renderPageToCanvas(num, back, backCtx);
 
-  // z-order: back comes to front
+  // Bring back page forward
   front.style.zIndex = 1;
   back.style.zIndex = 2;
 
-  // reset classes
+  // Reset states
   front.classList.remove("visible");
   back.classList.remove("visible");
 
-  // animate back into view
+  // Animate
   requestAnimationFrame(() => {
     back.classList.add("visible");
   });
@@ -86,7 +92,11 @@ async function flipToPage(num) {
   }, 1200);
 }
 
-// Load the PDF and show first page
+
+// =========================
+// LOAD FIRST PAGE — FIXED
+// =========================
+
 async function loadPdf() {
   const loadingTask = pdfjsLib.getDocument(PDF_URL);
   pdfDoc = await loadingTask.promise;
@@ -94,13 +104,17 @@ async function loadPdf() {
 
   await renderPageToCanvas(1, pageA, ctxA);
 
-  // initial state: A visible, B hidden
   pageA.style.zIndex = 2;
   pageB.style.zIndex = 1;
+
   pageA.classList.add("visible");
 }
 
-// Nav buttons
+
+// =========================
+// NAV BUTTONS — FIXED
+// =========================
+
 document.getElementById("prevBtn").onclick = () => {
   if (currentPage > 1) flipToPage(currentPage - 1);
 };
@@ -109,5 +123,9 @@ document.getElementById("nextBtn").onclick = () => {
   if (currentPage < totalPages) flipToPage(currentPage + 1);
 };
 
-// Init
+
+// =========================
+// INIT
+// =========================
+
 loadPdf();
