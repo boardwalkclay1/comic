@@ -15,9 +15,6 @@
       background: var(--theme-bg);
       color: #fff;
       font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
       overflow-x: hidden;
     }
 
@@ -28,23 +25,26 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      z-index: 10;
+      position: sticky;
+      top: 0;
+      z-index: 20;
     }
 
     footer {
       border-top: 1px solid var(--theme-accent);
       border-bottom: none;
+      position: sticky;
+      bottom: 0;
+      z-index: 20;
     }
 
     #viewer {
-      flex: 1;
+      height: calc(100vh - 140px);
       display: flex;
       justify-content: center;
       align-items: center;
-      overflow: hidden;
       background: #000;
-      height: calc(100vh - 140px);
-      position: relative;
+      overflow: hidden;
     }
 
     #flipWrapper {
@@ -61,14 +61,14 @@
       transform: translateX(-50%);
       height: 100%;
       width: auto;
-      transition: transform 0.6s ease, box-shadow 0.6s ease;
+      transition: transform 1.2s ease, box-shadow 1.2s ease;
       transform-origin: left center;
       backface-visibility: hidden;
     }
 
     .flip {
       transform: translateX(-50%) rotateY(-180deg);
-      box-shadow: -20px 0 40px rgba(0,0,0,0.6);
+      box-shadow: -30px 0 60px rgba(0,0,0,0.7);
     }
 
     button {
@@ -93,12 +93,41 @@
       text-transform: uppercase;
     }
 
-    /* YOUTUBE SECTION */
     #ytSection {
-      padding: 20px;
+      padding: 30px;
       background: #05060f;
       border-top: 1px solid #222;
       text-align: center;
+      margin-top: 40px;
+    }
+
+    #ytSearch {
+      width: 90%;
+      max-width: 360px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid #343c66;
+      background: #02030a;
+      color: #e5e7ff;
+      font-size: 12px;
+      outline: none;
+    }
+
+    #ytResults {
+      margin-top: 10px;
+      max-height: 200px;
+      overflow-y: auto;
+      font-size: 12px;
+    }
+
+    .yt-row {
+      padding: 6px 0;
+      cursor: pointer;
+      color: #cfd3ff;
+    }
+
+    .yt-row:hover {
+      color: #ffffff;
     }
 
     #ytFrame {
@@ -106,6 +135,7 @@
       height: 200px;
       border-radius: 8px;
       border: 1px solid #343c66;
+      margin-top: 10px;
     }
   </style>
 </head>
@@ -124,23 +154,25 @@
   </div>
 </div>
 
-<!-- YOUTUBE PLAYER -->
-<div id="ytSection">
-  <iframe 
-    id="ytFrame"
-    src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-    title="YouTube video player"
-    frameborder="0"
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-    allowfullscreen>
-  </iframe>
-</div>
-
 <footer>
   <button id="prevBtn">Prev</button>
   <div class="page-info" id="pageInfo">Page 0 / 0</div>
   <button id="nextBtn">Next</button>
 </footer>
+
+<div id="ytSection">
+  <input id="ytSearch" placeholder="Search YouTube…">
+  <div id="ytResults"></div>
+
+  <iframe 
+    id="ytFrame"
+    src=""
+    title="YouTube player"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowfullscreen>
+  </iframe>
+</div>
 
 <script type="module">
   import * as pdfjsLib from "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.149/pdf.min.mjs";
@@ -158,12 +190,10 @@
 
   let fileName = new URLSearchParams(window.location.search).get("id");
   if (!fileName) throw new Error("Missing ?id=");
-
   if (!fileName.toLowerCase().endsWith(".pdf")) fileName += ".pdf";
 
   const baseName = fileName.replace(".pdf", "");
   const themeColor = comicThemes[baseName] || "#343c66";
-
   document.documentElement.style.setProperty("--theme-accent", themeColor);
 
   const PDF_URL = `https://boardwalkclay1.github.io/comic/assets/books/${fileName}`;
@@ -222,7 +252,7 @@
       isRendering = false;
 
       window.scrollTo({ top: 0, behavior: "smooth" });
-    }, 600);
+    }, 1200);
   }
 
   async function loadPdf() {
@@ -246,6 +276,22 @@
   };
 
   loadPdf();
+
+  /* YOUTUBE SEARCH */
+  const ytSearch = document.getElementById("ytSearch");
+  const ytResults = document.getElementById("ytResults");
+  const ytFrame = document.getElementById("ytFrame");
+
+  ytSearch.addEventListener("input", () => {
+    const q = ytSearch.value.trim();
+    if (!q) return;
+
+    ytResults.innerHTML = `
+      <div class="yt-row" onclick="ytFrame.src='https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(q)}'">
+        Play search results for: ${q}
+      </div>
+    `;
+  });
 </script>
 
 </body>
