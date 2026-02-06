@@ -18,45 +18,71 @@
       overflow-x: hidden;
     }
 
+    /* FULL SIZE COMIC */
     #viewer {
-      height: 100vh;
+      min-height: 100vh;
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items: flex-start;
       background: #000;
-      overflow: hidden;
+      overflow-y: auto;
+      padding-top: 40px;
+      padding-bottom: 120px;
     }
 
     #flipWrapper {
       position: relative;
       display: inline-block;
       perspective: 2000px;
-      height: 100%;
     }
 
     .pageCanvas {
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      height: 100%;
-      width: auto;
+      width: 100%;
+      max-width: 900px;
+      height: auto;
       transition: transform 1.4s ease, box-shadow 1.4s ease;
       transform-origin: left center;
       backface-visibility: hidden;
     }
 
     .flip {
-      transform: translateX(-50%) rotateY(-180deg);
+      transform: rotateY(-180deg);
       box-shadow: -40px 0 80px rgba(0,0,0,0.8);
     }
 
+    /* FLOATING NAV BUTTONS */
+    #navButtons {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 50;
+    }
+
+    .navBtn {
+      padding: 10px 20px;
+      background: #1b2140;
+      color: #e5e7ff;
+      border: 1px solid var(--theme-accent);
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .navBtn:hover {
+      background: var(--theme-accent);
+    }
+
+    /* YOUTUBE SECTION */
     #ytSection {
       padding: 30px;
       background: #05060f;
       border-top: 1px solid #222;
       text-align: center;
-      margin-top: 40px;
     }
 
     #ytSearch {
@@ -73,7 +99,7 @@
 
     #ytResults {
       margin-top: 12px;
-      max-height: 220px;
+      max-height: 260px;
       overflow-y: auto;
       font-size: 14px;
     }
@@ -94,32 +120,6 @@
       border-radius: 8px;
       border: 1px solid #343c66;
       margin-top: 12px;
-    }
-
-    #navButtons {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 20px;
-      z-index: 50;
-    }
-
-    .navBtn {
-      padding: 10px 20px;
-      background: #1b2140;
-      color: #e5e7ff;
-      border: 1px solid var(--theme-accent);
-      border-radius: 20px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: bold;
-      text-transform: uppercase;
-    }
-
-    .navBtn:hover {
-      background: var(--theme-accent);
     }
   </style>
 </head>
@@ -189,15 +189,13 @@
 
   async function renderPageToCanvas(pageNum, canvas, ctx) {
     const page = await pdfDoc.getPage(pageNum);
-    const viewport = page.getViewport({ scale: 2.2 });
 
-    const scale = window.innerHeight / viewport.height;
-    const scaledViewport = page.getViewport({ scale });
+    const viewport = page.getViewport({ scale: 3.0 }); // SHARP TEXT
 
-    canvas.width = scaledViewport.width;
-    canvas.height = scaledViewport.height;
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
 
-    await page.render({ canvasContext: ctx, viewport: scaledViewport }).promise;
+    await page.render({ canvasContext: ctx, viewport }).promise;
   }
 
   async function flipToPage(num) {
@@ -210,13 +208,12 @@
 
     await renderPageToCanvas(num, back, backCtx);
 
-    front.style.transform = "translateX(-50%) rotateY(0deg)";
-    back.style.transform = "translateX(-50%) rotateY(180deg)";
+    front.classList.remove("flip");
+    back.classList.remove("flip");
 
     requestAnimationFrame(() => back.classList.add("flip"));
 
     setTimeout(() => {
-      back.classList.remove("flip");
       showingA = !showingA;
       currentPage = num;
       isRendering = false;
@@ -243,17 +240,20 @@
 
   loadPdf();
 
+  /* REAL YOUTUBE SEARCH (NO API KEY) */
   const ytSearch = document.getElementById("ytSearch");
   const ytResults = document.getElementById("ytResults");
   const ytFrame = document.getElementById("ytFrame");
 
-  ytSearch.addEventListener("input", () => {
+  ytSearch.addEventListener("input", async () => {
     const q = ytSearch.value.trim();
     if (!q) return;
 
+    const searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`;
+
     ytResults.innerHTML = `
       <div class="yt-row" onclick="ytFrame.src='https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(q)}'">
-        Play search results for: ${q}
+        Play: ${q}
       </div>
     `;
   });
