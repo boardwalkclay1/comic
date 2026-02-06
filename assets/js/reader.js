@@ -7,8 +7,9 @@ export const soundtracks = {
 };
 
 const scPlayer = document.getElementById("scPlayer");
-scPlayer.src = soundtracks.khalid;
-
+if (scPlayer) {
+  scPlayer.src = soundtracks.khalid;
+}
 
 // =========================
 // PDF READER LOGIC
@@ -37,6 +38,7 @@ let totalPages = 0;
 let isRendering = false;
 let showingA = true;
 
+// Render a page into a canvas
 async function renderPageToCanvas(pageNum, canvas, ctx) {
   const page = await pdfDoc.getPage(pageNum);
   const viewport = page.getViewport({ scale: 3.0 });
@@ -46,13 +48,14 @@ async function renderPageToCanvas(pageNum, canvas, ctx) {
 
   await page.render({ canvasContext: ctx, viewport }).promise;
 
-  // Make wrapper match first page height so it never jumps
-  if (pageNum === 1) {
-    flipWrapper.style.width = canvas.style.width || canvas.width + "px";
-    flipWrapper.style.height = canvas.style.height || canvas.height + "px";
+  // Set wrapper size once so layout doesn't jump
+  if (!flipWrapper.style.width || !flipWrapper.style.height) {
+    flipWrapper.style.width = canvas.width + "px";
+    flipWrapper.style.height = canvas.height + "px";
   }
 }
 
+// Flip to a given page number
 async function flipToPage(num) {
   if (isRendering) return;
   isRendering = true;
@@ -63,38 +66,41 @@ async function flipToPage(num) {
 
   await renderPageToCanvas(num, back, backCtx);
 
-  // front goes away, back comes to front
+  // z-order: back comes to front
   front.style.zIndex = 1;
   back.style.zIndex = 2;
 
-  // reset transforms
-  front.classList.remove("flip");
-  back.classList.remove("flip");
+  // reset classes
+  front.classList.remove("visible");
+  back.classList.remove("visible");
 
-  // back rotates into view
+  // animate back into view
   requestAnimationFrame(() => {
-    back.classList.add("flip");
+    back.classList.add("visible");
   });
 
   setTimeout(() => {
     showingA = !showingA;
     currentPage = num;
     isRendering = false;
-  }, 1400);
+  }, 1200);
 }
 
+// Load the PDF and show first page
 async function loadPdf() {
   const loadingTask = pdfjsLib.getDocument(PDF_URL);
   pdfDoc = await loadingTask.promise;
   totalPages = pdfDoc.numPages;
 
-  // initial page on A, B prepped as back
   await renderPageToCanvas(1, pageA, ctxA);
+
+  // initial state: A visible, B hidden
   pageA.style.zIndex = 2;
   pageB.style.zIndex = 1;
-  pageA.classList.add("flip");
+  pageA.classList.add("visible");
 }
 
+// Nav buttons
 document.getElementById("prevBtn").onclick = () => {
   if (currentPage > 1) flipToPage(currentPage - 1);
 };
@@ -103,4 +109,5 @@ document.getElementById("nextBtn").onclick = () => {
   if (currentPage < totalPages) flipToPage(currentPage + 1);
 };
 
+// Init
 loadPdf();
