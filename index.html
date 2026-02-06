@@ -41,25 +41,23 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      perspective: 2000px;
+      perspective: 2600px;
       z-index: 1;
     }
 
     .page {
       position: absolute;
-      width: 60vmin;
-      height: 80vmin;
-      max-width: 480px;
-      max-height: 640px;
+      width: 100vw;
+      height: 100vh;
       background-size: cover;
       background-position: center;
-      border-radius: 8px;
-      box-shadow: 0 40px 80px rgba(0,0,0,0.8);
+      border-radius: 0;
+      box-shadow: 0 0 120px rgba(0,0,0,0.9);
       transform-origin: left center;
       opacity: 0;
-      transform: translateX(-10%) rotateY(40deg) scale(0.9);
-      filter: brightness(0.7);
-      mix-blend-mode: screen;
+      transform: translateX(-20%) rotateY(50deg) scale(1.1);
+      filter: brightness(0.6) contrast(1.1);
+      mix-blend-mode: lighten;
     }
 
     .page--active {
@@ -73,8 +71,8 @@
     @keyframes pageFlip {
       0% {
         opacity: 0;
-        transform: translateX(-20%) rotateY(60deg) scale(0.85);
-        filter: brightness(0.4);
+        transform: translateX(-30%) rotateY(70deg) scale(1.15);
+        filter: brightness(0.3);
       }
       40% {
         opacity: 1;
@@ -83,28 +81,28 @@
       }
       100% {
         opacity: 1;
-        transform: translateX(5%) rotateY(-10deg) scale(1.02);
-        filter: brightness(1.1);
+        transform: translateX(3%) rotateY(-8deg) scale(1.02);
+        filter: brightness(1.15);
       }
     }
 
     @keyframes pageBurn {
       0% {
         opacity: 1;
-        filter: brightness(1.1) contrast(1) drop-shadow(0 0 20px rgba(255,140,0,0.6));
+        filter: brightness(1.2) contrast(1.1) drop-shadow(0 0 40px rgba(255,140,0,0.7));
         clip-path: inset(0% 0% 0% 0%);
       }
       40% {
-        filter: brightness(1.3) contrast(1.2) drop-shadow(0 0 40px rgba(255,80,0,0.9));
-        clip-path: inset(5% 3% 8% 4%);
+        filter: brightness(1.4) contrast(1.3) drop-shadow(0 0 60px rgba(255,80,0,1));
+        clip-path: inset(8% 6% 10% 6%);
       }
       80% {
-        filter: brightness(0.9) contrast(1.4) drop-shadow(0 0 60px rgba(255,40,0,1));
-        clip-path: inset(20% 15% 25% 18%);
+        filter: brightness(0.8) contrast(1.6) drop-shadow(0 0 80px rgba(255,40,0,1));
+        clip-path: inset(25% 20% 30% 22%);
       }
       100% {
         opacity: 0;
-        filter: brightness(0.2) contrast(2) drop-shadow(0 0 80px rgba(0,0,0,1));
+        filter: brightness(0.2) contrast(2) drop-shadow(0 0 100px rgba(0,0,0,1));
         clip-path: inset(50% 50% 50% 50%);
       }
     }
@@ -117,7 +115,7 @@
       align-items: center;
       justify-content: center;
       pointer-events: none;
-      z-index: 2;
+      z-index: 3;
       text-align: center;
     }
 
@@ -132,10 +130,10 @@
     }
 
     .intro-title {
-      font-size: clamp(2.4rem, 4vw, 3.4rem);
+      font-size: clamp(2.8rem, 6vw, 4.2rem);
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      text-shadow: 0 0 30px rgba(0,0,0,0.9);
+      text-shadow: 0 0 40px rgba(0,0,0,0.9);
       opacity: 0;
       transform: translateY(20px);
       animation: fadeUp 1.2s ease-out 0.8s forwards;
@@ -143,9 +141,9 @@
 
     .intro-sub {
       margin-top: 0.75rem;
-      font-size: 0.95rem;
+      font-size: 1rem;
       color: #cfd3ff;
-      max-width: 420px;
+      max-width: 480px;
       opacity: 0;
       transform: translateY(20px);
       animation: fadeUp 1.2s ease-out 1.2s forwards;
@@ -163,7 +161,7 @@
     }
 
     .intro-cta {
-      margin-top: 2.2rem;
+      margin-top: 2.4rem;
       display: flex;
       gap: 1rem;
       justify-content: center;
@@ -173,13 +171,13 @@
     }
 
     .intro-btn {
-      padding: 0.8rem 1.8rem;
+      padding: 0.9rem 2rem;
       border-radius: 999px;
       border: 1px solid #9aa4ff;
       background: rgba(5,6,20,0.9);
       color: #e5e7ff;
       font-weight: 700;
-      font-size: 0.9rem;
+      font-size: 1rem;
       text-transform: uppercase;
       letter-spacing: 0.12em;
       cursor: pointer;
@@ -212,7 +210,7 @@
       mix-blend-mode: soft-light;
       opacity: 0.7;
       pointer-events: none;
-      z-index: 3;
+      z-index: 4;
     }
   </style>
 </head>
@@ -222,7 +220,6 @@
     <div class="intro-bg"></div>
 
     <div class="page-stack" id="pageStack">
-      <!-- 10 pages, replace URLs with your own images -->
       <div class="page" style="background-image:url('assets/pages/page-1.jpg')"></div>
       <div class="page" style="background-image:url('assets/pages/page-2.jpg')"></div>
       <div class="page" style="background-image:url('assets/pages/page-3.jpg')"></div>
@@ -239,7 +236,7 @@
       <div class="intro-kicker">WELCOME TO</div>
       <div class="intro-title">BOARDWALK COMIC UNIVERSE</div>
       <div class="intro-sub">
-        Ten frames from the multiverse, cut into pages, flashed like movie reels, refusing to burn out.
+        A cinematic gateway into your world — where every frame hits like a panel.
       </div>
       <div class="intro-cta">
         <a href="library.html" class="intro-btn">Enter Library</a>
@@ -271,7 +268,7 @@
       index++;
 
       if (index <= pages.length) {
-        setTimeout(showNextPage, 260); // fast, cinematic
+        setTimeout(showNextPage, 260);
       } else {
         setTimeout(() => {
           pages.forEach(p => p.classList.remove("page--burn"));
