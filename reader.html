@@ -5,21 +5,25 @@
   <title>Boardwalk PDF Comic Reader</title>
 
   <style>
+    :root {
+      --theme-bg: #05060a;
+      --theme-accent: #343c66;
+    }
+
     body {
       margin: 0;
-      background: #05060a;
+      background: var(--theme-bg);
       color: #fff;
       font-family: Arial, sans-serif;
       display: flex;
       flex-direction: column;
       height: 100vh;
-      overflow: hidden;
     }
 
     header, footer {
       padding: 12px 16px;
       background: #0b0d16;
-      border-bottom: 1px solid #222838;
+      border-bottom: 1px solid var(--theme-accent);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -27,7 +31,7 @@
     }
 
     footer {
-      border-top: 1px solid #222838;
+      border-top: 1px solid var(--theme-accent);
       border-bottom: none;
     }
 
@@ -35,20 +39,15 @@
       flex: 1;
       display: flex;
       justify-content: center;
-      align-items: center;
-      overflow: hidden;
+      align-items: flex-start;
+      overflow: auto;
       background: #000;
-      position: relative;
+      padding: 10px 0;
     }
 
     #flipWrapper {
       position: relative;
-      width: 100%;
-      height: 100%;
-      max-width: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      display: inline-block;
       perspective: 2000px;
     }
 
@@ -71,7 +70,7 @@
       padding: 8px 16px;
       background: #1b2140;
       color: #e5e7ff;
-      border: 1px solid #343c66;
+      border: 1px solid var(--theme-accent);
       border-radius: 20px;
       cursor: pointer;
       font-size: 12px;
@@ -80,13 +79,98 @@
     }
 
     button:hover {
-      background: #27305a;
+      background: var(--theme-accent);
     }
 
     .page-info {
       font-size: 12px;
-      color: #9aa4ff;
+      color: var(--theme-accent);
       text-transform: uppercase;
+    }
+
+    /* Compact, stylish YouTube section */
+    #musicPlayer {
+      padding: 10px 16px 14px 16px;
+      background: #05060f;
+      border-top: 1px solid #222838;
+    }
+
+    #ytSearchBar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    #ytSearch {
+      flex: 1;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid #343c66;
+      background: #02030a;
+      color: #e5e7ff;
+      font-size: 12px;
+      outline: none;
+    }
+
+    #ytSearch::placeholder {
+      color: #6b72a8;
+    }
+
+    #ytBtn {
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: #1b2140;
+      border: 1px solid var(--theme-accent);
+      color: #e5e7ff;
+      font-size: 11px;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    #ytBtn:hover {
+      background: var(--theme-accent);
+    }
+
+    #ytResults {
+      margin-top: 8px;
+      max-height: 140px;
+      overflow-y: auto;
+    }
+
+    .yt-result {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 0;
+      cursor: pointer;
+      font-size: 11px;
+      color: #cfd3ff;
+    }
+
+    .yt-result:hover {
+      color: #ffffff;
+    }
+
+    .yt-thumb {
+      width: 40px;
+      height: 24px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+
+    #ytPlayerWrapper {
+      margin-top: 10px;
+      display: none;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 0 18px rgba(0,0,0,0.7);
+      border: 1px solid var(--theme-accent);
+      max-width: 360px;
+    }
+
+    #ytPlayer {
+      width: 100%;
+      height: 200px;
     }
   </style>
 </head>
@@ -105,11 +189,24 @@
   </div>
 </div>
 
+<div id="musicPlayer">
+  <div id="ytSearchBar">
+    <input id="ytSearch" placeholder="Search YouTube music…" />
+    <button id="ytBtn">Search</button>
+  </div>
+  <div id="ytResults"></div>
+  <div id="ytPlayerWrapper">
+    <div id="ytPlayer"></div>
+  </div>
+</div>
+
 <footer>
   <button id="prevBtn">Prev</button>
   <div class="page-info" id="pageInfo">Page 0 / 0</div>
   <button id="nextBtn">Next</button>
 </footer>
+
+<script src="https://www.youtube.com/iframe_api"></script>
 
 <script type="module">
   import * as pdfjsLib from "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.149/pdf.min.mjs";
@@ -117,7 +214,14 @@
   pdfjsLib.GlobalWorkerOptions.workerSrc =
     "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.149/pdf.worker.min.mjs";
 
-  // Get ?id=
+  const comicThemes = {
+    "gold-lake-1": "#2a4dff",
+    "gold-lake-2": "#2a4dff",
+    "new-civil-war-1": "#ff2a2a",
+    "new-civil-war-2": "#ff2a2a",
+    "new-civil-war-3": "#ff2a2a"
+  };
+
   let fileName = new URLSearchParams(window.location.search).get("id");
 
   if (!fileName) {
@@ -125,12 +229,16 @@
     throw new Error("Missing ?id= parameter");
   }
 
-  // Auto-add .pdf
   if (!fileName.toLowerCase().endsWith(".pdf")) {
     fileName = fileName + ".pdf";
   }
 
-  // Your real path
+  const baseName = fileName.replace(".pdf", "");
+  const themeColor = comicThemes[baseName] || "#343c66";
+
+  document.documentElement.style.setProperty("--theme-accent", themeColor);
+  document.documentElement.style.setProperty("--theme-bg", "#05060a");
+
   const PDF_URL = `https://boardwalkclay1.github.io/comic/assets/books/${fileName}`;
 
   const pageA = document.getElementById("pageA");
@@ -140,6 +248,8 @@
 
   const status = document.getElementById("status");
   const pageInfo = document.getElementById("pageInfo");
+  const prevBtn = document.getElementById("prevBtn");
+  const nextBtn = document.getElementById("nextBtn");
 
   let pdfDoc = null;
   let currentPage = 1;
@@ -171,11 +281,9 @@
 
     await renderPageToCanvas(num, back, backCtx);
 
-    // Reset transforms
     front.style.transform = "translateX(-50%) rotateY(0deg)";
     back.style.transform = "translateX(-50%) rotateY(180deg)";
 
-    // Trigger flip
     requestAnimationFrame(() => {
       back.classList.add("flip");
     });
@@ -197,7 +305,6 @@
 
       totalPages = pdfDoc.numPages;
 
-      // Render first page to pageA
       await renderPageToCanvas(1, pageA, ctxA);
       pageInfo.textContent = `Page 1 / ${totalPages}`;
       setStatus("Ready");
@@ -218,6 +325,69 @@
   };
 
   loadPdf();
+
+  // YOUTUBE
+  let ytPlayer;
+
+  window.onYouTubeIframeAPIReady = () => {
+    ytPlayer = new YT.Player("ytPlayer", {
+      height: "200",
+      width: "360",
+      videoId: "",
+      playerVars: { autoplay: 1 }
+    });
+  };
+
+  const ytBtn = document.getElementById("ytBtn");
+  const ytSearch = document.getElementById("ytSearch");
+  const ytResults = document.getElementById("ytResults");
+  const ytPlayerWrapper = document.getElementById("ytPlayerWrapper");
+
+  ytBtn.onclick = async () => {
+    const q = ytSearch.value.trim();
+    if (!q) return;
+
+    // Replace YOUR_API_KEY with a valid YouTube Data API v3 key
+    const apiKey = "YOUR_API_KEY";
+    const url =
+      `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=5&q=${encodeURIComponent(q)}&key=${apiKey}`;
+
+    try {
+      const res = await fetch(url);
+      const data = await res.json();
+
+      ytResults.innerHTML = "";
+
+      (data.items || []).forEach(item => {
+        const vid = item.id.videoId;
+        const title = item.snippet.title;
+        const thumb = item.snippet.thumbnails.default?.url;
+
+        const row = document.createElement("div");
+        row.className = "yt-result";
+
+        if (thumb) {
+          const img = document.createElement("img");
+          img.src = thumb;
+          img.className = "yt-thumb";
+          row.appendChild(img);
+        }
+
+        const span = document.createElement("span");
+        span.textContent = title;
+        row.appendChild(span);
+
+        row.onclick = () => {
+          ytPlayerWrapper.style.display = "block";
+          ytPlayer.loadVideoById(vid);
+        };
+
+        ytResults.appendChild(row);
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  };
 </script>
 
 </body>
