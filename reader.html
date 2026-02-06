@@ -82,14 +82,16 @@
   pdfjsLib.GlobalWorkerOptions.workerSrc =
     "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.149/pdf.worker.min.mjs";
 
-  // 🔥🔥🔥 CHANGE THIS TO THE PDF YOU WANT TO READ 🔥🔥🔥
-  // Example: "Gold%20Lake%20(1).pdf"
-  const PDF_URL = new URLSearchParams(window.location.search).get("id");
+  // 🔥🔥🔥 THIS IS THE FIX 🔥🔥🔥
+  // We build an ABSOLUTE URL to your PDF
+  const fileName = new URLSearchParams(window.location.search).get("id");
 
-  if (!PDF_URL) {
+  if (!fileName) {
     document.getElementById("status").textContent = "No PDF specified.";
     throw new Error("Missing ?id= parameter");
   }
+
+  const PDF_URL = `https://boardwalkclay1.github.io/comic/${fileName}`;
 
   const canvas = document.getElementById("pdfCanvas");
   const ctx = canvas.getContext("2d");
