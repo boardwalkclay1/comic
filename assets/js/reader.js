@@ -24,17 +24,17 @@ if (!fileName.toLowerCase().endsWith(".pdf")) fileName += ".pdf";
 
 const PDF_URL = `https://boardwalkclay1.github.io/comic/assets/books/${fileName}`;
 
-// We will ONLY use pageA as the live canvas
+// ONE CANVAS ONLY — future‑proof
 const flipWrapper = document.getElementById("flipWrapper");
-const pageCanvas = document.getElementById("pageA");
-const ctx = pageCanvas.getContext("2d");
+const canvas = document.getElementById("pageA");
+const ctx = canvas.getContext("2d");
 
 let pdfDoc = null;
 let currentPage = 1;
 let totalPages = 0;
 let isTurning = false;
 
-// Dramatic slow turn duration (match your CSS transition)
+// Dramatic slow turn duration
 const TURN_TIME = 1600;
 
 
@@ -46,19 +46,18 @@ async function renderPage(pageNum) {
   const page = await pdfDoc.getPage(pageNum);
   const viewport = page.getViewport({ scale: 3.0 });
 
-  pageCanvas.width = viewport.width;
-  pageCanvas.height = viewport.height;
+  canvas.width = viewport.width;
+  canvas.height = viewport.height;
 
   await page.render({ canvasContext: ctx, viewport }).promise;
 
-  // keep wrapper sized to current page
-  flipWrapper.style.width = pageCanvas.width + "px";
-  flipWrapper.style.height = pageCanvas.height + "px";
+  flipWrapper.style.width = canvas.width + "px";
+  flipWrapper.style.height = canvas.height + "px";
 }
 
 
 // =========================
-// PAGE TURN (ONE CLICK, NO SKIPS)
+// DRAMATIC PAGE TURN
 // =========================
 
 async function flipToPage(num) {
@@ -67,13 +66,14 @@ async function flipToPage(num) {
 
   isTurning = true;
 
-  // start dramatic effect
-  pageCanvas.classList.add("turning");
+  // Start dramatic animation
+  canvas.classList.add("turning");
 
+  // Render new page while animation plays
   await renderPage(num);
 
   setTimeout(() => {
-    pageCanvas.classList.remove("turning");
+    canvas.classList.remove("turning");
     currentPage = num;
     isTurning = false;
   }, TURN_TIME);
@@ -95,27 +95,16 @@ async function loadPdf() {
 
 
 // =========================
-// BUTTONS (ONE CLICK = ONE TURN)
+// BUTTONS — ONE CLICK WORKS
 // =========================
 
-const prevBtn = document.getElementById("prevBtn");
-const nextBtn = document.getElementById("nextBtn");
+document.getElementById("prevBtn").onclick = () => {
+  if (!isTurning && currentPage > 1) flipToPage(currentPage - 1);
+};
 
-if (prevBtn) {
-  prevBtn.onclick = () => {
-    if (!isTurning && currentPage > 1) {
-      flipToPage(currentPage - 1);
-    }
-  };
-}
-
-if (nextBtn) {
-  nextBtn.onclick = () => {
-    if (!isTurning && currentPage < totalPages) {
-      flipToPage(currentPage + 1);
-    }
-  };
-}
+document.getElementById("nextBtn").onclick = () => {
+  if (!isTurning && currentPage < totalPages) flipToPage(currentPage + 1);
+};
 
 
 // =========================
