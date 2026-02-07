@@ -1,90 +1,114 @@
-:root {
-  --theme-bg: #05060a;
-  --theme-accent: #343c66;
+// =========================
+// SOUNDTRACK EMBED
+// =========================
+
+const soundtracks = {
+  khalid: "https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/soundcloud%253Aplaylists%253A2187301982&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"
+};
+
+const scPlayer = document.getElementById("scPlayer");
+if (scPlayer) scPlayer.src = soundtracks.khalid;
+
+
+// =========================
+// PDF READER LOGIC (NO MODULES)
+// =========================
+
+const pdfjsLib = window["pdfjs-dist/build/pdf"];
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.149/pdf.worker.min.js";
+
+let fileName = new URLSearchParams(window.location.search).get("id");
+if (!fileName) throw new Error("Missing ?id=");
+if (!fileName.toLowerCase().endsWith(".pdf")) fileName += ".pdf";
+
+const PDF_URL = "https://boardwalkclay1.github.io/comic/assets/books/" + fileName;
+
+// ONE CANVAS ONLY
+const flipWrapper = document.getElementById("flipWrapper");
+const canvas = document.getElementById("pageA");
+const ctx = canvas.getContext("2d");
+
+let pdfDoc = null;
+let currentPage = 1;
+let totalPages = 0;
+let isTurning = false;
+
+// Dramatic slow turn duration
+const TURN_TIME = 1600;
+
+
+// =========================
+// RENDER PAGE
+// =========================
+
+async function renderPage(pageNum) {
+  const page = await pdfDoc.getPage(pageNum);
+  const viewport = page.getViewport({ scale: 3.0 });
+
+  canvas.width = viewport.width;
+  canvas.height = viewport.height;
+
+  await page.render({ canvasContext: ctx, viewport }).promise;
+
+  flipWrapper.style.width = canvas.width + "px";
+  flipWrapper.style.height = canvas.height + "px";
 }
 
-body {
-  margin: 0;
-  background: var(--theme-bg);
-  color: #fff;
-  font-family: Arial, sans-serif;
-  overflow-x: hidden;
+
+// =========================
+// DRAMATIC PAGE TURN
+// =========================
+
+async function flipToPage(num) {
+  if (isTurning) return;
+  if (num < 1 || num > totalPages) return;
+
+  isTurning = true;
+
+  // Start dramatic animation
+  canvas.classList.add("turning");
+
+  // Render new page while animation plays
+  await renderPage(num);
+
+  setTimeout(() => {
+    canvas.classList.remove("turning");
+    currentPage = num;
+    isTurning = false;
+  }, TURN_TIME);
 }
 
-/* VIEWER */
-#viewer {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  background: #000;
-  overflow-y: auto;
-  padding-top: 40px;
-  padding-bottom: 200px;
+
+// =========================
+// LOAD FIRST PAGE
+// =========================
+
+async function loadPdf() {
+  const loadingTask = pdfjsLib.getDocument(PDF_URL);
+  pdfDoc = await loadingTask.promise;
+  totalPages = pdfDoc.numPages;
+
+  await renderPage(1);
+  currentPage = 1;
 }
 
-/* FLIP WRAPPER */
-#flipWrapper {
-  position: relative;
-  display: block;
-  margin: 0 auto;
-  perspective: 2000px;
-}
 
-/* ONE CANVAS ONLY */
-#pageA {
-  width: 100%;
-  max-width: 900px;
-  height: auto;
-  transform-origin: left center;
-  transition: transform 1.6s ease, filter 1.6s ease;
-}
+// =========================
+// BUTTONS — ONE CLICK WORKS
+// =========================
 
-/* DRAMATIC PAGE TURN */
-#pageA.turning {
-  transform: rotateY(-25deg) scale(0.97);
-  filter: brightness(0.8);
-}
+document.getElementById("prevBtn").onclick = () => {
+  if (!isTurning && currentPage > 1) flipToPage(currentPage - 1);
+};
 
-/* NAV BUTTONS */
-#navButtons {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  z-index: 50;
-}
+document.getElementById("nextBtn").onclick = () => {
+  if (!isTurning && currentPage < totalPages) flipToPage(currentPage + 1);
+};
 
-.navBtn {
-  padding: 10px 20px;
-  background: #1b2140;
-  color: #e5e7ff;
-  border: 1px solid var(--theme-accent);
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: bold;
-  text-transform: uppercase;
-}
 
-.navBtn:hover {
-  background: var(--theme-accent);
-}
+// =========================
+// INIT
+// =========================
 
-/* MUSIC SECTION */
-#musicSection {
-  padding: 20px;
-  background: #05060f;
-  border-top: 1px solid #222;
-  text-align: center;
-}
-
-#scPlayer {
-  width: 100%;
-  max-width: 900px;
-  height: 300px;
-  border: none;
-  border-radius: 10px;
-}
+loadPdf();
