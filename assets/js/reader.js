@@ -24,87 +24,56 @@ if (!fileName.toLowerCase().endsWith(".pdf")) fileName += ".pdf";
 
 const PDF_URL = `https://boardwalkclay1.github.io/comic/assets/books/${fileName}`;
 
+// We will ONLY use pageA as the live canvas
 const flipWrapper = document.getElementById("flipWrapper");
-const pageA = document.getElementById("pageA");
-const pageB = document.getElementById("pageB");
-const ctxA = pageA.getContext("2d");
-const ctxB = pageB.getContext("2d");
+const pageCanvas = document.getElementById("pageA");
+const ctx = pageCanvas.getContext("2d");
 
 let pdfDoc = null;
 let currentPage = 1;
 let totalPages = 0;
 let isTurning = false;
-let showingA = true;
 
-// Dramatic slow turn (matches CSS)
+// Dramatic slow turn duration (match your CSS transition)
 const TURN_TIME = 1600;
-
-
-// =========================
-// CANVAS RESET
-// =========================
-
-function resetCanvas(canvas, ctx) {
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-}
 
 
 // =========================
 // RENDER PAGE
 // =========================
 
-async function renderPage(pageNum, canvas, ctx) {
+async function renderPage(pageNum) {
   const page = await pdfDoc.getPage(pageNum);
   const viewport = page.getViewport({ scale: 3.0 });
 
-  canvas.width = viewport.width;
-  canvas.height = viewport.height;
+  pageCanvas.width = viewport.width;
+  pageCanvas.height = viewport.height;
 
   await page.render({ canvasContext: ctx, viewport }).promise;
 
-  // Always update wrapper size
-  flipWrapper.style.width = canvas.width + "px";
-  flipWrapper.style.height = canvas.height + "px";
+  // keep wrapper sized to current page
+  flipWrapper.style.width = pageCanvas.width + "px";
+  flipWrapper.style.height = pageCanvas.height + "px";
 }
 
 
 // =========================
-// PAGE TURN (ONE CLICK)
+// PAGE TURN (ONE CLICK, NO SKIPS)
 // =========================
 
 async function flipToPage(num) {
-  if (isTurning) return;          // prevents double-click issues
+  if (isTurning) return;
   if (num < 1 || num > totalPages) return;
 
   isTurning = true;
 
-  const front = showingA ? pageA : pageB;
-  const back = showingA ? pageB : pageA;
-  const frontCtx = showingA ? ctxA : ctxB;
-  const backCtx = showingA ? ctxB : ctxA;
+  // start dramatic effect
+  pageCanvas.classList.add("turning");
 
-  // FULL reset to avoid multi-click bug
-  resetCanvas(front, frontCtx);
-  resetCanvas(back, backCtx);
-
-  await renderPage(num, back, backCtx);
-
-  // z-index swap
-  front.style.zIndex = 1;
-  back.style.zIndex = 2;
-
-  // reset animation classes
-  front.classList.remove("visible");
-  back.classList.remove("visible");
-
-  // trigger dramatic slow turn
-  requestAnimationFrame(() => {
-    back.classList.add("visible");
-  });
+  await renderPage(num);
 
   setTimeout(() => {
-    showingA = !showingA;
+    pageCanvas.classList.remove("turning");
     currentPage = num;
     isTurning = false;
   }, TURN_TIME);
@@ -120,28 +89,33 @@ async function loadPdf() {
   pdfDoc = await loadingTask.promise;
   totalPages = pdfDoc.numPages;
 
-  await renderPage(1, pageA, ctxA);
-
-  pageA.style.zIndex = 2;
-  pageB.style.zIndex = 1;
-
-  pageA.classList.add("visible");
-  showingA = true;
+  await renderPage(1);
   currentPage = 1;
 }
 
 
 // =========================
-// BUTTONS (ONE CLICK WORKING)
+// BUTTONS (ONE CLICK = ONE TURN)
 // =========================
 
-document.getElementById("prevBtn").onclick = () => {
-  if (!isTurning && currentPage > 1) flipToPage(currentPage - 1);
-};
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
 
-document.getElementById("nextBtn").onclick = () => {
-  if (!isTurning && currentPage < totalPages) flipToPage(currentPage + 1);
-};
+if (prevBtn) {
+  prevBtn.onclick = () => {
+    if (!isTurning && currentPage > 1) {
+      flipToPage(currentPage - 1);
+    }
+  };
+}
+
+if (nextBtn) {
+  nextBtn.onclick = () => {
+    if (!isTurning && currentPage < totalPages) {
+      flipToPage(currentPage + 1);
+    }
+  };
+}
 
 
 // =========================
