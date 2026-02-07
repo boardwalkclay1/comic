@@ -24,7 +24,7 @@ if (!fileName.toLowerCase().endsWith(".pdf")) fileName += ".pdf";
 
 const PDF_URL = `https://boardwalkclay1.github.io/comic/assets/books/${fileName}`;
 
-// ONE CANVAS ONLY — future‑proof
+// ONE CANVAS ONLY
 const flipWrapper = document.getElementById("flipWrapper");
 const canvas = document.getElementById("pageA");
 const ctx = canvas.getContext("2d");
