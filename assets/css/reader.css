@@ -31,28 +31,19 @@ body {
   perspective: 2000px;
 }
 
-/* CANVASES STACKED IN SAME SPOT */
-.pageCanvas {
-  position: absolute;
-  top: 0;
-  left: 0;
+/* ONE CANVAS ONLY */
+#pageA {
   width: 100%;
   max-width: 900px;
   height: auto;
-  transition: transform 1.2s ease, box-shadow 1.2s ease;
   transform-origin: left center;
-  backface-visibility: hidden;
+  transition: transform 1.6s ease, filter 1.6s ease;
 }
 
-/* initial back page rotated away */
-#pageB {
-  transform: rotateY(180deg);
-}
-
-/* visible page */
-.pageCanvas.visible {
-  transform: rotateY(0deg);
-  box-shadow: -40px 0 80px rgba(0,0,0,0.8);
+/* DRAMATIC PAGE TURN */
+#pageA.turning {
+  transform: rotateY(-25deg) scale(0.97);
+  filter: brightness(0.8);
 }
 
 /* NAV BUTTONS */
