@@ -23,6 +23,7 @@ const PDF_URL = `/comic/assets/books/${fileName}`;
 const pdfFrame = document.getElementById("pdfFrame");
 const flipWrapper = document.getElementById("flipWrapper");
 
+// Load the PDF into the iframe
 pdfFrame.src = PDF_URL;
 
 
@@ -30,20 +31,13 @@ pdfFrame.src = PDF_URL;
 // PAGE TURN ANIMATION
 // =========================
 
-let currentPage = 1;
-
-document.getElementById("nextBtn").onclick = () => {
+function turnPage() {
   flipWrapper.classList.add("turning");
 
   setTimeout(() => {
     flipWrapper.classList.remove("turning");
-  }, 1600);
-};
+  }, 900); // matches CSS timing
+}
 
-document.getElementById("prevBtn").onclick = () => {
-  flipWrapper.classList.add("turning");
-
-  setTimeout(() => {
-    flipWrapper.classList.remove("turning");
-  }, 1600);
-};
+document.getElementById("nextBtn").onclick = turnPage;
+document.getElementById("prevBtn").onclick = turnPage;
