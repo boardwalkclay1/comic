@@ -8,12 +8,16 @@
 
 <body>
 
+<!-- FULLSCREEN VIEWER -->
 <div id="viewer">
   <div id="flipWrapper">
-    <iframe id="pdfFrame"></iframe>
+    <!-- TWO CANVASES FOR PAGE TURN -->
+    <canvas id="pageA" class="pageCanvas"></canvas>
+    <canvas id="pageB" class="pageCanvas"></canvas>
   </div>
 </div>
 
+<!-- NAV BUTTONS -->
 <div id="navButtons">
   <div class="navBtn" id="prevBtn">Prev</div>
   <div class="navBtn" id="nextBtn">Next</div>
@@ -32,6 +36,8 @@
   </iframe>
 </div>
 
+<!-- READER LOGIC -->
 <script src="reader.js"></script>
+
 </body>
 </html>
