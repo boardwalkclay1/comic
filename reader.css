@@ -1,95 +1,171 @@
+/* ============================
+   GLOBAL
+============================ */
+
 :root {
-  --theme-bg: #05060a;
-  --theme-accent: #343c66;
+  --bg: #05060a;
+  --accent: #343c66;
+  --text: #e5e7ff;
+  --panel: #0b0d14;
 }
 
-/* BASE */
-body {
+* {
   margin: 0;
-  background: var(--theme-bg);
-  color: #fff;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
   font-family: Arial, sans-serif;
   overflow: hidden;
+  height: 100vh;
+  width: 100vw;
 }
 
-/* FULLSCREEN VIEWER */
+
+/* ============================
+   VIEWER STAGE
+============================ */
+
 #viewer {
-  height: 100vh;
+  height: calc(100vh - 420px); /* leaves room for SoundCloud */
   width: 100vw;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #000;
+  background: black;
+  position: relative;
+  overflow: hidden;
 }
 
-/* FLIP WRAPPER */
+
+/* ============================
+   PAGE FLIP WRAPPER
+============================ */
+
 #flipWrapper {
   position: relative;
   width: 100%;
   height: 100%;
-  max-width: 1100px;
-  max-height: 100vh;
+  max-width: 1200px;
+  max-height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  perspective: 2000px;
-  transition: transform 1.5s ease, filter 1.5s ease;
+  perspective: 2200px;
+  transform-style: preserve-3d;
+  transition: transform 1.4s ease, filter 1.4s ease;
 }
 
-/* DRAMATIC TURN */
+/* Dramatic tilt during turn */
 #flipWrapper.turning {
   transform: rotateY(-35deg) scale(0.96);
   filter: brightness(0.75);
 }
 
-/* CANVASES */
+
+/* ============================
+   CANVASES (PAGE A + PAGE B)
+============================ */
+
 .pageCanvas {
   position: absolute;
   top: 0;
   left: 0;
-  max-width: 100%;
+  width: auto;
+  height: 100%;
   max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+  z-index: 1;
 }
 
-/* NAV BUTTONS */
+
+/* ============================
+   MULTI-LAYER PAGE PEEL (future)
+============================ */
+
+.turnLayer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: auto;
+  height: 100%;
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+  transform-origin: left center;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 3;
+}
+
+.turnLayer.active {
+  opacity: 1;
+  animation: peelTurn 1.4s ease forwards;
+}
+
+@keyframes peelTurn {
+  0%   { transform: rotateY(0deg); }
+  100% { transform: rotateY(-160deg); }
+}
+
+
+/* ============================
+   NAV BUTTONS (BOTTOM CORNERS)
+============================ */
+
 #navButtons {
   position: fixed;
-  top: 20px;
-  right: 20px;
+  bottom: 40px;
+  left: 0;
+  right: 0;
+  padding: 0 40px;
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  justify-content: space-between;
   z-index: 50;
 }
 
 .navBtn {
-  padding: 10px 20px;
+  padding: 14px 32px;
   background: #1b2140;
-  color: #e5e7ff;
-  border: 1px solid var(--theme-accent);
-  border-radius: 20px;
+  color: var(--text);
+  border: 1px solid var(--accent);
+  border-radius: 30px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: bold;
   text-transform: uppercase;
+  transition: background 0.2s ease, transform 0.2s ease;
 }
 
 .navBtn:hover {
-  background: var(--theme-accent);
+  background: var(--accent);
+  transform: scale(1.05);
 }
 
-/* MUSIC SECTION */
+
+/* ============================
+   SOUNDTRACK SECTION
+============================ */
+
 #musicSection {
-  padding: 16px 20px;
-  background: #05060f;
-  border-top: 1px solid #222;
-  text-align: center;
+  width: 100%;
+  background: var(--panel);
+  padding: 20px 0 40px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-top: 1px solid #111;
 }
 
 #scPlayer {
-  width: 100%;
-  max-width: 900px;
-  height: 300px;
+  width: 92%;
+  max-width: 1300px;
+  height: 380px;
   border: none;
-  border-radius: 10px;
+  border-radius: 14px;
+  overflow: hidden;
 }
