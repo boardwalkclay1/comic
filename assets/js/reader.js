@@ -2,29 +2,27 @@
 // SOUNDTRACK EMBED
 // =========================
 
-export const soundtracks = {
-  khalid: `https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/soundcloud%253Aplaylists%253A2187301982&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true`
+const soundtracks = {
+  khalid: "https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/soundcloud%253Aplaylists%253A2187301982&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"
 };
 
 const scPlayer = document.getElementById("scPlayer");
-if (scPlayer) {
-  scPlayer.src = soundtracks.khalid;
-}
+if (scPlayer) scPlayer.src = soundtracks.khalid;
+
 
 // =========================
-// PDF READER LOGIC
+// PDF READER LOGIC (UMD BUILD)
 // =========================
 
-import * as pdfjsLib from "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.149/pdf.min.mjs";
-
+const pdfjsLib = window["pdfjs-dist/build/pdf"];
 pdfjsLib.GlobalWorkerOptions.workerSrc =
-  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.149/pdf.worker.min.mjs";
+  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.149/pdf.worker.min.js";
 
 let fileName = new URLSearchParams(window.location.search).get("id");
 if (!fileName) throw new Error("Missing ?id=");
 if (!fileName.toLowerCase().endsWith(".pdf")) fileName += ".pdf";
 
-const PDF_URL = `https://boardwalkclay1.github.io/comic/assets/books/${fileName}`;
+const PDF_URL = "https://boardwalkclay1.github.io/comic/assets/books/" + fileName;
 
 const flipWrapper = document.getElementById("flipWrapper");
 const pageA = document.getElementById("pageA");
@@ -38,7 +36,11 @@ let totalPages = 0;
 let isRendering = false;
 let showingA = true;
 
-// Render a page into a canvas
+
+// =========================
+// RENDER PAGE
+// =========================
+
 async function renderPageToCanvas(pageNum, canvas, ctx) {
   const page = await pdfDoc.getPage(pageNum);
   const viewport = page.getViewport({ scale: 3.0 });
@@ -48,14 +50,15 @@ async function renderPageToCanvas(pageNum, canvas, ctx) {
 
   await page.render({ canvasContext: ctx, viewport }).promise;
 
-  // Set wrapper size once so layout doesn't jump
-  if (!flipWrapper.style.width || !flipWrapper.style.height) {
-    flipWrapper.style.width = canvas.width + "px";
-    flipWrapper.style.height = canvas.height + "px";
-  }
+  flipWrapper.style.width = canvas.width + "px";
+  flipWrapper.style.height = canvas.height + "px";
 }
 
-// Flip to a given page number
+
+// =========================
+// PAGE FLIP
+// =========================
+
 async function flipToPage(num) {
   if (isRendering) return;
   isRendering = true;
@@ -66,15 +69,12 @@ async function flipToPage(num) {
 
   await renderPageToCanvas(num, back, backCtx);
 
-  // z-order: back comes to front
   front.style.zIndex = 1;
   back.style.zIndex = 2;
 
-  // reset classes
   front.classList.remove("visible");
   back.classList.remove("visible");
 
-  // animate back into view
   requestAnimationFrame(() => {
     back.classList.add("visible");
   });
@@ -86,7 +86,11 @@ async function flipToPage(num) {
   }, 1200);
 }
 
-// Load the PDF and show first page
+
+// =========================
+// LOAD FIRST PAGE
+// =========================
+
 async function loadPdf() {
   const loadingTask = pdfjsLib.getDocument(PDF_URL);
   pdfDoc = await loadingTask.promise;
@@ -94,13 +98,16 @@ async function loadPdf() {
 
   await renderPageToCanvas(1, pageA, ctxA);
 
-  // initial state: A visible, B hidden
   pageA.style.zIndex = 2;
   pageB.style.zIndex = 1;
   pageA.classList.add("visible");
 }
 
-// Nav buttons
+
+// =========================
+// BUTTONS
+// =========================
+
 document.getElementById("prevBtn").onclick = () => {
   if (currentPage > 1) flipToPage(currentPage - 1);
 };
@@ -109,5 +116,9 @@ document.getElementById("nextBtn").onclick = () => {
   if (currentPage < totalPages) flipToPage(currentPage + 1);
 };
 
-// Init
+
+// =========================
+// INIT
+// =========================
+
 loadPdf();
