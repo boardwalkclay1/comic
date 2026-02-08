@@ -11,41 +11,80 @@ if (scPlayer) scPlayer.src = soundtracks.khalid;
 
 
 // =========================
-// SIMPLE PDF VIEWER (NO PDF.JS)
+// IMAGE-BASED COMIC READER
 // =========================
 
-let fileName = new URLSearchParams(window.location.search).get("id");
-if (!fileName) throw new Error("Missing ?id=");
-if (!fileName.toLowerCase().endsWith(".pdf")) fileName += ".pdf";
+let book = new URLSearchParams(window.location.search).get("id");
+if (!book) throw new Error("Missing ?id=");
 
 let currentPage = 1;
-
-function loadPage(page) {
-  const PDF_URL = `/comic/assets/books/${fileName}#page=${page}&view=FitH&zoom=page-fit&pagemode=none`;
-  document.getElementById("pdfFrame").src = PDF_URL;
-}
-
-loadPage(currentPage);
-
-
-// =========================
-// PAGE TURN ANIMATION + PAGE CHANGE
-// =========================
+let isTurning = false;
 
 const flipWrapper = document.getElementById("flipWrapper");
+const pageA = document.getElementById("pageA");
+const pageB = document.getElementById("pageB");
 
-function turnPage(direction) {
+const ctxA = pageA.getContext("2d");
+const ctxB = pageB.getContext("2d");
+
+let showingA = true;
+
+
+// LOAD IMAGE INTO CANVAS
+function loadImage(pageNum, canvas, ctx) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.src = `/comic/assets/books/${book}/${pageNum}.jpg`;
+
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+      resolve(true);
+    };
+
+    img.onerror = () => resolve(false);
+  });
+}
+
+
+// PAGE TURN
+async function turnTo(pageNum) {
+  if (isTurning) return;
+  if (pageNum < 1) return;
+
+  isTurning = true;
+
+  const front = showingA ? pageA : pageB;
+  const back = showingA ? pageB : pageA;
+  const backCtx = showingA ? ctxB : ctxA;
+
+  const exists = await loadImage(pageNum, back, backCtx);
+  if (!exists) {
+    isTurning = false;
+    return;
+  }
+
+  // Bring back canvas to front
+  front.style.zIndex = 1;
+  back.style.zIndex = 2;
+
+  // Trigger animation
   flipWrapper.classList.add("turning");
 
   setTimeout(() => {
     flipWrapper.classList.remove("turning");
-
-    currentPage += direction;
-    if (currentPage < 1) currentPage = 1;
-
-    loadPage(currentPage);
-  }, 900);
+    showingA = !showingA;
+    currentPage = pageNum;
+    isTurning = false;
+  }, 1500);
 }
 
-document.getElementById("nextBtn").onclick = () => turnPage(+1);
-document.getElementById("prevBtn").onclick = () => turnPage(-1);
+
+// LOAD FIRST PAGE
+loadImage(1, pageA, ctxA);
+
+
+// BUTTONS
+document.getElementById("nextBtn").onclick = () => turnTo(currentPage + 1);
+document.getElementById("prevBtn").onclick = () => turnTo(currentPage - 1);
