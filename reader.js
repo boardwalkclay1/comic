@@ -1,25 +1,34 @@
 document.addEventListener("DOMContentLoaded", () => {
 
   // =========================
-  // SOUNDTRACK EMBED
+  // SOUNDTRACK EMBED (STATIC)
   // =========================
-
-  const soundtracks = {
-    khalid: "https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/soundcloud%253Aplaylists%253A2187301982&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"
-  };
 
   const scPlayer = document.getElementById("scPlayer");
-  if (scPlayer) scPlayer.src = soundtracks.khalid;
+  // already has src in HTML, so nothing else needed
 
 
 
   // =========================
-  // IMAGE-BASED COMIC READER
+  // PDF.js SETUP
   // =========================
 
-  let book = new URLSearchParams(window.location.search).get("id");
-  if (!book) throw new Error("Missing ?id=");
+  // Point worker to same CDN version
+  if (window['pdfjsLib']) {
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+  } else {
+    console.error("pdfjsLib not found");
+    return;
+  }
 
+  // Get book id from URL: ?id=gold-lake-1
+  let fileName = new URLSearchParams(window.location.search).get("id");
+  if (!fileName) throw new Error("Missing ?id=");
+
+  const PDF_URL = `/comic/assets/books/${fileName}.pdf`;
+
+  let pdfDoc = null;
   let currentPage = 1;
   let isTurning = false;
 
@@ -35,23 +44,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   // =========================
-  // LOAD IMAGE INTO CANVAS
+  // RENDER A PDF PAGE INTO A CANVAS
   // =========================
 
-  function loadImage(pageNum, canvas, ctx) {
-    return new Promise(resolve => {
-      const img = new Image();
-      img.src = `/comic/assets/books/${book}/${pageNum}.jpg`;
+  async function renderPageToCanvas(pageNum, canvas, ctx) {
+    if (!pdfDoc) return false;
 
-      img.onload = () => {
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx.drawImage(img, 0, 0);
-        resolve(true);
+    try {
+      const page = await pdfDoc.getPage(pageNum);
+
+      // Fit page into viewport based on height
+      const viewport = page.getViewport({ scale: 1.5 });
+
+      // Resize canvas
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+
+      const renderContext = {
+        canvasContext: ctx,
+        viewport: viewport
       };
 
-      img.onerror = () => resolve(false);
-    });
+      await page.render(renderContext).promise;
+      return true;
+    } catch (e) {
+      console.error("Error rendering page", pageNum, e);
+      return false;
+    }
   }
 
 
@@ -62,7 +81,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function turnTo(pageNum) {
     if (isTurning) return;
-    if (pageNum < 1) return;
+    if (!pdfDoc) return;
+    if (pageNum < 1 || pageNum > pdfDoc.numPages) return;
 
     isTurning = true;
 
@@ -70,17 +90,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const back = showingA ? pageB : pageA;
     const backCtx = showingA ? ctxB : ctxA;
 
-    const exists = await loadImage(pageNum, back, backCtx);
-    if (!exists) {
+    const ok = await renderPageToCanvas(pageNum, back, backCtx);
+    if (!ok) {
       isTurning = false;
       return;
     }
 
-    // Bring back canvas to front
+    // Stack order: back becomes visible after flip
     front.style.zIndex = 1;
     back.style.zIndex = 2;
 
-    // Trigger animation
+    // Trigger dramatic flip
     flipWrapper.classList.add("turning");
 
     setTimeout(() => {
@@ -94,18 +114,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   // =========================
-  // INITIAL PAGE LOAD
+  // INITIALIZE PDF + FIRST PAGE
   // =========================
 
-  loadImage(1, pageA, ctxA);
+  pdfjsLib.getDocument(PDF_URL).promise.then(async (pdf) => {
+    pdfDoc = pdf;
+
+    // Render first page into pageA
+    await renderPageToCanvas(1, pageA, ctxA);
+    pageA.style.zIndex = 2;
+    pageB.style.zIndex = 1;
+  }).catch(err => {
+    console.error("Error loading PDF:", err);
+  });
 
 
 
   // =========================
-  // BUTTONS
+  // BUTTON HANDLERS
   // =========================
 
-  document.getElementById("nextBtn").onclick = () => turnTo(currentPage + 1);
-  document.getElementById("prevBtn").onclick = () => turnTo(currentPage - 1);
+  document.getElementById("nextBtn").onclick = () => {
+    if (!pdfDoc) return;
+    if (currentPage >= pdfDoc.numPages) return;
+    turnTo(currentPage + 1);
+  };
+
+  document.getElementById("prevBtn").onclick = () => {
+    if (!pdfDoc) return;
+    if (currentPage <= 1) return;
+    turnTo(currentPage - 1);
+  };
 
 });
