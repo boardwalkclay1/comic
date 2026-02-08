@@ -8,22 +8,29 @@
 
 <body>
 
-<!-- FULLSCREEN VIEWER -->
+<!-- FULLSCREEN COMIC VIEWER -->
 <div id="viewer">
   <div id="flipWrapper">
-    <!-- TWO CANVASES FOR PAGE TURN -->
+
+    <!-- BASE PAGES -->
     <canvas id="pageA" class="pageCanvas"></canvas>
     <canvas id="pageB" class="pageCanvas"></canvas>
+
+    <!-- 3 PEEL LAYERS FOR DRAMATIC TURN -->
+    <canvas id="turn1" class="turnLayer"></canvas>
+    <canvas id="turn2" class="turnLayer"></canvas>
+    <canvas id="turn3" class="turnLayer"></canvas>
+
   </div>
 </div>
 
-<!-- NAV BUTTONS -->
+<!-- NAV BUTTONS (FLOATING) -->
 <div id="navButtons">
   <div class="navBtn" id="prevBtn">Prev</div>
   <div class="navBtn" id="nextBtn">Next</div>
 </div>
 
-<!-- SOUNDTRACK EMBED -->
+<!-- SOUNDTRACK SECTION (BELOW, SCROLL TO REACH) -->
 <div id="musicSection">
   <iframe 
     id="scPlayer"
