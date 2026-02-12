@@ -1,26 +1,73 @@
-/* ================================
-   COLOR SYSTEM — COMIC CORE
-================================ */
+/* ============================================
+   CORE COLOR TOKENS — UNIVERSAL BASE
+============================================ */
 :root {
-  --comic-blue: #4dabff;
-  --comic-red: #ff4d4d;
-  --comic-yellow: #ffe066;
-  --comic-white: #ffffff;
-  --comic-black: #111111;
+  --c-white: #ffffff;
+  --c-black: #000000;
 
-  --panel-shadow: 6px 6px 0 var(--comic-black);
-  --panel-border: 4px solid var(--comic-black);
+  --c-blue: #4dabff;
+  --c-red: #ff3b3b;
+  --c-yellow: #ffe066;
+
+  --c-panel-bg: var(--c-white);
+  --c-panel-border: var(--c-black);
+  --c-panel-shadow: 6px 6px 0 var(--c-black);
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+
+  --font-comic: "Bangers", "Comic Sans MS", sans-serif;
 }
 
-/* ================================
-   GLOBAL COMIC LOOK
-================================ */
+/* ============================================
+   THEMES — HERO / VILLAIN / NOIR / COSMIC
+============================================ */
+html[data-theme="hero"] {
+  --c-blue: #4dabff;
+  --c-red: #ff2e2e;
+  --c-yellow: #ffe066;
+  --c-panel-bg: #f7f7f7;
+  background: #000;
+  color: var(--c-white);
+}
+
+html[data-theme="villain"] {
+  --c-blue: #1a3d7c;
+  --c-red: #b30000;
+  --c-yellow: #d4b200;
+  --c-panel-bg: #e6e6e6;
+  background: #000;
+  color: var(--c-white);
+}
+
+html[data-theme="noir"] {
+  --c-blue: #6aa0ff;
+  --c-red: #ff4d4d;
+  --c-yellow: #f5d76e;
+  --c-panel-bg: #1a1a1a;
+  background: #0d0d0d;
+  color: #eaeaea;
+}
+
+html[data-theme="cosmic"] {
+  --c-blue: #7acbff;
+  --c-red: #ff5f8a;
+  --c-yellow: #ffe98a;
+  --c-panel-bg: #0f0f1a;
+  background: radial-gradient(circle at center, #0f0f1a, #000);
+  color: #e0e6ff;
+}
+
+/* ============================================
+   GLOBAL RESET + TYPOGRAPHY
+============================================ */
 body {
   margin: 0;
   padding: 0;
-  background: var(--comic-yellow);
-  font-family: "Bangers", "Comic Sans MS", sans-serif;
-  color: var(--comic-black);
+  font-family: var(--font-comic);
+  background: var(--c-yellow);
+  color: var(--c-black);
 }
 
 h1, h2, h3, h4 {
@@ -29,43 +76,48 @@ h1, h2, h3, h4 {
   margin: 0;
 }
 
-/* Comic panel container */
-.page, .scene {
-  background: var(--comic-white);
-  border: var(--panel-border);
-  box-shadow: var(--panel-shadow);
-  border-radius: 8px;
+/* ============================================
+   COMIC PANEL SYSTEM
+============================================ */
+.panel {
+  background: var(--c-panel-bg);
+  border: 4px solid var(--c-panel-border);
+  box-shadow: var(--c-panel-shadow);
+  border-radius: var(--radius-md);
   padding: 1.5rem;
-  margin: 1.5rem;
+  margin: 1.5rem 0;
 }
 
-/* ================================
+.panel--tight { padding: 1rem; }
+.panel--loose { padding: 2rem; }
+
+/* ============================================
    TOP BAR
-================================ */
+============================================ */
 .top-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1rem 1.5rem;
-  background: var(--comic-blue);
-  border-bottom: var(--panel-border);
-  box-shadow: var(--panel-shadow);
+  background: var(--c-blue);
+  border-bottom: 4px solid var(--c-black);
+  box-shadow: var(--c-panel-shadow);
 }
 
 .logo-small {
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   font-weight: 900;
-  color: var(--comic-black);
+  color: var(--c-black);
   text-decoration: none;
 }
 
-/* ================================
+/* ============================================
    NAV LINKS
-================================ */
+============================================ */
 .nav-links a {
   margin-left: 1rem;
   font-weight: 900;
-  color: var(--comic-black);
+  color: var(--c-black);
   text-decoration: none;
   padding-bottom: 2px;
   border-bottom: 3px solid transparent;
@@ -73,49 +125,39 @@ h1, h2, h3, h4 {
 }
 
 .nav-links a:hover {
-  border-bottom: 3px solid var(--comic-red);
+  border-bottom: 3px solid var(--c-red);
 }
 
-/* ================================
-   COMIC BUTTONS
-================================ */
-.btn, .scene__next-btn, .theme-toggle {
+/* ============================================
+   BUTTONS — COMIC ACTION
+============================================ */
+.btn {
   display: inline-block;
   padding: 0.7rem 1.4rem;
   font-size: 1.1rem;
   font-weight: 900;
   text-transform: uppercase;
   border-radius: 999px;
-  border: 4px solid var(--comic-black);
+  border: 4px solid var(--c-black);
   cursor: pointer;
-  box-shadow: var(--panel-shadow);
+  box-shadow: var(--c-panel-shadow);
   transition: transform 0.12s ease;
 }
 
-.btn:hover,
-.scene__next-btn:hover,
-.theme-toggle:hover {
-  transform: scale(1.07);
+.btn:hover { transform: scale(1.07); }
+
+.btn--blue { background: var(--c-blue); color: var(--c-black); }
+.btn--red { background: var(--c-red); color: var(--c-white); }
+.btn--yellow { background: var(--c-yellow); color: var(--c-black); }
+.btn--ghost {
+  background: transparent;
+  color: var(--c-black);
+  border-color: var(--c-black);
 }
 
-.btn--primary {
-  background: var(--comic-blue);
-  color: var(--comic-black);
-}
-
-.btn--secondary {
-  background: var(--comic-red);
-  color: var(--comic-white);
-}
-
-.theme-toggle {
-  background: var(--comic-yellow);
-  color: var(--comic-black);
-}
-
-/* ================================
+/* ============================================
    COMIC GRID (Library)
-================================ */
+============================================ */
 .comic-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -123,18 +165,16 @@ h1, h2, h3, h4 {
 }
 
 .comic-card {
-  background: var(--comic-white);
-  border: var(--panel-border);
-  box-shadow: var(--panel-shadow);
+  background: var(--c-panel-bg);
+  border: 4px solid var(--c-black);
+  box-shadow: var(--c-panel-shadow);
   padding: 1rem;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   transition: transform 0.15s ease;
 }
 
-.comic-card:hover {
-  transform: scale(1.05);
-}
+.comic-card:hover { transform: scale(1.05); }
 
 .comic-card-title {
   font-size: 1.2rem;
@@ -142,13 +182,13 @@ h1, h2, h3, h4 {
   margin-top: 0.5rem;
 }
 
-/* ================================
+/* ============================================
    SPEECH BUBBLE
-================================ */
+============================================ */
 .speech-bubble {
-  background: var(--comic-white);
-  border: var(--panel-border);
-  box-shadow: var(--panel-shadow);
+  background: var(--c-panel-bg);
+  border: 4px solid var(--c-black);
+  box-shadow: var(--c-panel-shadow);
   padding: 1.5rem;
   border-radius: 12px;
   position: relative;
@@ -157,59 +197,23 @@ h1, h2, h3, h4 {
 .speech-bubble::after {
   content: "";
   position: absolute;
-  bottom: -20px;
+  bottom: -22px;
   left: 40px;
-  width: 0;
-  height: 0;
-  border-left: 20px solid var(--comic-black);
-  border-right: 20px solid transparent;
-  border-top: 20px solid var(--comic-black);
+  border-left: 22px solid var(--c-black);
+  border-right: 22px solid transparent;
+  border-top: 22px solid var(--c-black);
 }
 
-/* ================================
-   HERO / VILLAIN THEMES (FINAL)
-================================ */
-html[data-theme="hero"] {
-  --comic-blue: #4dabff;
-  --comic-red: #ff2e2e;
-  --comic-yellow: #ffe066;
-  --comic-white: #f5f5f5;
-  --comic-black: #000000;
-
-  background: #000000;
-  color: var(--comic-white);
-}
-
-html[data-theme="villain"] {
-  --comic-blue: #1a3d7c;
-  --comic-yellow: #d4b200;
-  --comic-white: #e6e6e6;
-  --comic-red: #b30000;
-  --comic-black: #000000;
-
-  background: #000000;
-  color: var(--comic-white);
-}
-
-/* ================================
-   READER FIX — PAGE LOCK (FINAL)
-================================ */
-#flipWrapper.locked {
-  overflow: hidden !important;
-  height: auto !important;
-}
-
-/* ================================
+/* ============================================
    READER CANVAS + FLIP
-================================ */
+============================================ */
 .pageCanvas {
   width: 100%;
   max-width: 900px;
-  height: auto;
-  border: var(--panel-border);
-  box-shadow: var(--panel-shadow);
-  border-radius: 8px;
-  background: var(--comic-white);
+  background: var(--c-panel-bg);
+  border: 4px solid var(--c-black);
+  box-shadow: var(--c-panel-shadow);
+  border-radius: var(--radius-md);
   transition: transform 1.4s ease, box-shadow 1.4s ease;
   transform-origin: left center;
   backface-visibility: hidden;
@@ -218,4 +222,10 @@ html[data-theme="villain"] {
 .flip {
   transform: rotateY(-180deg);
   box-shadow: -40px 0 80px rgba(0,0,0,0.8);
+}
+
+/* Lock fix */
+#flipWrapper.locked {
+  overflow: hidden !important;
+  height: auto !important;
 }
