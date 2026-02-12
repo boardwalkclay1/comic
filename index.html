@@ -35,6 +35,54 @@
       z-index: 0;
     }
 
+    /* ============================================
+       FLOATING COMIC GALAXY — NEW LAYER
+    ============================================ */
+    .comic-galaxy {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .comic-galaxy-page {
+      position: absolute;
+      width: 420px;
+      height: 600px;
+      background-size: cover;
+      background-position: center;
+      opacity: 0;
+      filter: brightness(0.8) contrast(1.2);
+      border-radius: 8px;
+      mix-blend-mode: screen;
+      animation: galaxyFloat 18s ease-in-out infinite;
+    }
+
+    @keyframes galaxyFloat {
+      0% {
+        opacity: 0;
+        transform: translateY(40vh) translateX(-20vw) rotate(-12deg) scale(1.1);
+      }
+      25% {
+        opacity: 0.6;
+      }
+      50% {
+        opacity: 0.9;
+        transform: translateY(-10vh) translateX(10vw) rotate(6deg) scale(1.15);
+      }
+      75% {
+        opacity: 0.5;
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-40vh) translateX(25vw) rotate(18deg) scale(1.05);
+      }
+    }
+
+    /* ============================================
+       ORIGINAL PAGE FLIP SYSTEM
+    ============================================ */
     .page-stack {
       position: absolute;
       inset: 0;
@@ -107,6 +155,9 @@
       }
     }
 
+    /* ============================================
+       TITLE + CTA
+    ============================================ */
     .intro-title-wrap {
       position: absolute;
       inset: 0;
@@ -219,6 +270,9 @@
   <div class="intro-root">
     <div class="intro-bg"></div>
 
+    <!-- NEW GALAXY LAYER -->
+    <div class="comic-galaxy" id="comicGalaxy"></div>
+
     <div class="page-stack" id="pageStack">
       <div class="page" style="background-image:url('assets/pages/page-1.jpg')"></div>
       <div class="page" style="background-image:url('assets/pages/page-2.jpg')"></div>
@@ -277,6 +331,29 @@
     }
 
     setTimeout(showNextPage, 400);
+
+    /* ============================================
+       SPAWN FLOATING GALAXY PAGES
+    ============================================ */
+    function spawnGalaxyPages() {
+      const galaxy = document.getElementById("comicGalaxy");
+
+      pages.forEach((p, i) => {
+        const g = document.createElement("div");
+        g.className = "comic-galaxy-page";
+        g.style.backgroundImage = p.style.backgroundImage;
+
+        g.style.left = Math.random() * 80 + "vw";
+        g.style.top = Math.random() * 60 + "vh";
+        g.style.animationDelay = (i * 2) + "s";
+
+        galaxy.appendChild(g);
+      });
+    }
+
+    setTimeout(() => {
+      spawnGalaxyPages();
+    }, pages.length * 260 + 1500);
   </script>
 </body>
 </html>
