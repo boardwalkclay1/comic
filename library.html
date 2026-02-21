@@ -6,10 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="assets/css/styles.css" />
   <script defer src="assets/js/theme.js"></script>
-  <script defer src="assets/js/library.js"></script>
 </head>
+
 <body>
   <div id="theme-root" class="app">
+
+    <!-- HEADER -->
     <header class="top-bar">
       <a href="index.html" class="logo-small">BOARDWALK COMIC UNIVERSE</a>
       <nav class="nav-links">
@@ -19,16 +21,36 @@
       <button id="themeToggle" class="theme-toggle">Hero / Villain</button>
     </header>
 
+    <!-- MAIN CONTENT -->
     <main class="page page--library">
       <h1 class="page-title">Library</h1>
       <p class="page-subtitle">
-        All comics and books in this universe. Click any title to open it in page form.
+        Select a title to open the full comic or book.
       </p>
 
-      <section class="comic-grid" id="bookGrid">
-        <!-- Filled by library.js from books.json -->
+      <section class="comic-grid">
+
+        <!-- GOLD LAKE -->
+        <a class="comic-card" href="reader.html?id=gold-lake">
+          <h3>Gold Lake</h3>
+          <p>Complete Comic</p>
+        </a>
+
+        <!-- NEW CIVIL WAR -->
+        <a class="comic-card" href="reader.html?id=new-civil-war">
+          <h3>New Civil War</h3>
+          <p>Complete Comic</p>
+        </a>
+
+        <!-- BOARDWALK CHAPTER BOOKS -->
+        <a class="comic-card" href="chapter-books.html">
+          <h3>Boardwalk Chapter Books</h3>
+          <p>Stories & Lore</p>
+        </a>
+
       </section>
     </main>
+
   </div>
 </body>
 </html>
