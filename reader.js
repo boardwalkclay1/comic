@@ -1,16 +1,33 @@
 document.addEventListener("DOMContentLoaded", () => {
 
   // =========================
-  // SOUNDTRACK (STATIC)
+  // COMIC → PDF FILES
   // =========================
-  const scPlayer = document.getElementById("scPlayer");
+  const COMICS = {
+    "gold-lake": [
+      "gold-lake-1.pdf",
+      "gold-lake-2.pdf"
+    ],
+    "new-civil-war": [
+      "new-civil-war-1.pdf",
+      "new-civil-war-2.pdf",
+      "new-civil-war-3.pdf"
+    ]
+  };
 
+  // =========================
+  // GET COMIC ID FROM URL
+  // =========================
+  const comicID = new URLSearchParams(window.location.search).get("id");
+  if (!comicID) throw new Error("Missing ?id=");
+  if (!COMICS[comicID]) throw new Error("Unknown comic id: " + comicID);
 
+  const pdfFiles = COMICS[comicID]; // just filenames
 
   // =========================
   // PDF.js SETUP
   // =========================
-  if (!window['pdfjsLib']) {
+  if (!window.pdfjsLib) {
     console.error("pdfjsLib not found");
     return;
   }
@@ -18,15 +35,20 @@ document.addEventListener("DOMContentLoaded", () => {
   pdfjsLib.GlobalWorkerOptions.workerSrc =
     "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 
-  let fileName = new URLSearchParams(window.location.search).get("id");
-  if (!fileName) throw new Error("Missing ?id=");
+  // =========================
+  // STATE
+  // =========================
+  let pdfDocs = [];   // loaded PDF objects
+  let pageMap = [];   // [{ pdfIndex, page }]
+  let totalPages = 0;
 
-  const PDF_URL = `/comic/assets/books/${fileName}.pdf`;
-
-  let pdfDoc = null;
   let currentPage = 1;
   let isTurning = false;
+  let showingA = true;
 
+  // =========================
+  // ELEMENTS
+  // =========================
   const flipWrapper = document.getElementById("flipWrapper");
 
   const pageA = document.getElementById("pageA");
@@ -34,7 +56,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const ctxA = pageA.getContext("2d");
   const ctxB = pageB.getContext("2d");
 
-  // 3 peel layers
   const turnLayers = [
     document.getElementById("turn1"),
     document.getElementById("turn2"),
@@ -42,44 +63,50 @@ document.addEventListener("DOMContentLoaded", () => {
   ];
   const turnCtxs = turnLayers.map(c => c.getContext("2d"));
 
-  let showingA = true;
-
-
-
   // =========================
-  // RENDER PDF PAGE INTO CANVAS
+  // LOAD ALL PDFs FROM assets/books/
   // =========================
-  async function renderPageToCanvas(pageNum, canvas, ctx) {
-    if (!pdfDoc) return false;
+  async function loadAllPDFs() {
+    for (let i = 0; i < pdfFiles.length; i++) {
+      const url = `assets/books/${pdfFiles[i]}`;
+      const pdf = await pdfjsLib.getDocument(url).promise;
+      pdfDocs.push(pdf);
 
-    try {
-      const page = await pdfDoc.getPage(pageNum);
-      const viewport = page.getViewport({ scale: 1.5 });
-
-      canvas.width = viewport.width;
-      canvas.height = viewport.height;
-
-      await page.render({
-        canvasContext: ctx,
-        viewport: viewport
-      }).promise;
-
-      return true;
-    } catch (e) {
-      console.error("Error rendering page", pageNum, e);
-      return false;
+      for (let p = 1; p <= pdf.numPages; p++) {
+        pageMap.push({ pdfIndex: i, page: p });
+      }
     }
+    totalPages = pageMap.length;
   }
 
+  // =========================
+  // RENDER PAGE
+  // =========================
+  async function renderPage(globalPageNum, canvas, ctx) {
+    if (globalPageNum < 1 || globalPageNum > totalPages) return false;
 
+    const info = pageMap[globalPageNum - 1];
+    const pdf = pdfDocs[info.pdfIndex];
+    const page = await pdf.getPage(info.page);
+
+    const viewport = page.getViewport({ scale: 1.5 });
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+
+    await page.render({
+      canvasContext: ctx,
+      viewport
+    }).promise;
+
+    return true;
+  }
 
   // =========================
-  // PAGE TURN WITH 3 PEEL LAYERS
+  // PAGE TURN
   // =========================
-  async function turnTo(pageNum) {
+  async function turnTo(globalPageNum) {
     if (isTurning) return;
-    if (!pdfDoc) return;
-    if (pageNum < 1 || pageNum > pdfDoc.numPages) return;
+    if (globalPageNum < 1 || globalPageNum > totalPages) return;
 
     isTurning = true;
 
@@ -87,74 +114,52 @@ document.addEventListener("DOMContentLoaded", () => {
     const back = showingA ? pageB : pageA;
     const backCtx = showingA ? ctxB : ctxA;
 
-    // Render next page into back canvas
-    const ok = await renderPageToCanvas(pageNum, back, backCtx);
-    if (!ok) {
-      isTurning = false;
-      return;
-    }
+    await renderPage(globalPageNum, back, backCtx);
 
-    // Render next page into peel layers
     for (let i = 0; i < turnLayers.length; i++) {
-      await renderPageToCanvas(pageNum, turnLayers[i], turnCtxs[i]);
+      await renderPage(globalPageNum, turnLayers[i], turnCtxs[i]);
     }
 
-    // Stack order
     front.style.zIndex = 1;
     back.style.zIndex = 2;
 
-    // Trigger wrapper tilt
     flipWrapper.classList.add("turning");
 
-    // Trigger peel layers with stagger
     turnLayers.forEach((layer, i) => {
       layer.classList.remove("active");
-      void layer.offsetWidth; // force reflow
-      setTimeout(() => {
-        layer.classList.add("active");
-      }, i * 120);
+      void layer.offsetWidth;
+      setTimeout(() => layer.classList.add("active"), i * 120);
     });
 
-    // End turn
     setTimeout(() => {
       flipWrapper.classList.remove("turning");
       turnLayers.forEach(layer => layer.classList.remove("active"));
       showingA = !showingA;
-      currentPage = pageNum;
+      currentPage = globalPageNum;
       isTurning = false;
     }, 1500);
   }
 
-
-
   // =========================
-  // INITIALIZE PDF + FIRST PAGE
+  // INIT
   // =========================
-  pdfjsLib.getDocument(PDF_URL).promise.then(async (pdf) => {
-    pdfDoc = pdf;
-
-    await renderPageToCanvas(1, pageA, ctxA);
+  loadAllPDFs().then(async () => {
+    await renderPage(1, pageA, ctxA);
     pageA.style.zIndex = 2;
     pageB.style.zIndex = 1;
   }).catch(err => {
-    console.error("Error loading PDF:", err);
+    console.error("Error loading PDFs:", err);
   });
 
-
-
   // =========================
-  // BUTTON HANDLERS
+  // BUTTONS
   // =========================
   document.getElementById("nextBtn").onclick = () => {
-    if (!pdfDoc) return;
-    if (currentPage >= pdfDoc.numPages) return;
-    turnTo(currentPage + 1);
+    if (currentPage < totalPages) turnTo(currentPage + 1);
   };
 
   document.getElementById("prevBtn").onclick = () => {
-    if (!pdfDoc) return;
-    if (currentPage <= 1) return;
-    turnTo(currentPage - 1);
+    if (currentPage > 1) turnTo(currentPage - 1);
   };
 
 });
