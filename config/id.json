@@ -1,0 +1,6 @@
+{
+  "video_full_prefix": "VCF_",
+  "video_short_prefix": "VCS_",
+  "audio_prefix": "AUD_",
+  "padding": 5
+}
