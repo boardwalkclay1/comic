@@ -3,7 +3,8 @@ window.addEventListener("DOMContentLoaded", async () => {
   if (!grid) return;
 
   try {
-    const res = await fetch("books.json", { cache: "no-store" });
+    // FIXED: load from root on Cloudflare Pages
+    const res = await fetch("/books.json", { cache: "no-store" });
     const data = await res.json();
     const books = data.books || [];
 
@@ -12,7 +13,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     books.forEach((book) => {
       const card = document.createElement("a");
       card.className = "comic-card";
-      card.href = `reader.html?id=${encodeURIComponent(book.id)}`;
+      card.href = `reader?id=${encodeURIComponent(book.id)}`;
 
       card.innerHTML = `
         <div class="comic-card__cover ${book.coverClass || ""}"></div>
