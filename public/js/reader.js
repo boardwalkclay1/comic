@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-
   // =========================
   // COMIC → PDF FILES
   // =========================
@@ -16,6 +15,17 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // =========================
+  // ERROR DISPLAY
+  // =========================
+  function showError(msg) {
+    document.body.innerHTML = `
+      <div style="padding:40px; font-size:20px; color:red;">
+        ${msg}
+      </div>
+    `;
+  }
+
+  // =========================
   // GET COMIC ID FROM URL
   // =========================
   let comicID = new URLSearchParams(window.location.search).get("id");
@@ -24,8 +34,11 @@ document.addEventListener("DOMContentLoaded", () => {
     return showError("Missing ?id= in URL");
   }
 
-  // normalize ID
-  comicID = comicID.trim().toLowerCase();
+  // normalize ID: trim, lowercase, strip trailing -number
+  comicID = comicID
+    .trim()
+    .toLowerCase()
+    .replace(/-\d+$/, ""); // gold-lake-2 → gold-lake
 
   if (!COMICS[comicID]) {
     return showError("Unknown comic id: " + comicID);
@@ -72,22 +85,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const turnCtxs = turnLayers.map(c => c.getContext("2d"));
 
   // =========================
-  // ERROR DISPLAY
-  // =========================
-  function showError(msg) {
-    document.body.innerHTML = `
-      <div style="padding:40px; font-size:20px; color:red;">
-        ${msg}
-      </div>
-    `;
-  }
-
-  // =========================
-  // LOAD ALL PDFs (FIXED PATH)
+  // LOAD ALL PDFs  (/assets/*.pdf)
   // =========================
   async function loadAllPDFs() {
     for (let i = 0; i < pdfFiles.length; i++) {
-      const url = `/assets/${pdfFiles[i]}`; // FIXED PATH
+      const url = `/assets/${pdfFiles[i]}`;
       const pdf = await pdfjsLib.getDocument(url).promise;
       pdfDocs.push(pdf);
 
@@ -162,23 +164,31 @@ document.addEventListener("DOMContentLoaded", () => {
   // =========================
   // INIT
   // =========================
-  loadAllPDFs().then(async () => {
-    await renderPage(1, pageA, ctxA);
-    pageA.style.zIndex = 2;
-    pageB.style.zIndex = 1;
-  }).catch(err => {
-    showError("Error loading PDFs: " + err.message);
-  });
+  loadAllPDFs()
+    .then(async () => {
+      await renderPage(1, pageA, ctxA);
+      pageA.style.zIndex = 2;
+      pageB.style.zIndex = 1;
+    })
+    .catch(err => {
+      showError("Error loading PDFs: " + err.message);
+    });
 
   // =========================
   // BUTTONS
   // =========================
-  document.getElementById("nextBtn").onclick = () => {
-    if (currentPage < totalPages) turnTo(currentPage + 1);
-  };
+  const nextBtn = document.getElementById("nextBtn");
+  const prevBtn = document.getElementById("prevBtn");
 
-  document.getElementById("prevBtn").onclick = () => {
-    if (currentPage > 1) turnTo(currentPage - 1);
-  };
+  if (nextBtn) {
+    nextBtn.onclick = () => {
+      if (currentPage < totalPages) turnTo(currentPage + 1);
+    };
+  }
 
+  if (prevBtn) {
+    prevBtn.onclick = () => {
+      if (currentPage > 1) turnTo(currentPage - 1);
+    };
+  }
 });
