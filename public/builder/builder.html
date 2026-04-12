@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Boardwalk Comic Builder</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/assets/styles.css" />
+  <style>
+    body { background:#05060a; color:#fff; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .builder-root { max-width: 1200px; margin: 0 auto; padding: 24px; }
+    .builder-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; }
+    .builder-title { font-size: 1.8rem; font-weight: 800; }
+    .builder-layout { display:grid; grid-template-columns: 320px 1fr; gap:24px; align-items:flex-start; }
+    .builder-panel { background:#0b0d16; border-radius:16px; padding:16px 18px; border:1px solid #20263a; }
+    .builder-panel h2 { font-size:1rem; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:10px; opacity:0.9; }
+    .builder-panel label { display:block; font-size:0.8rem; margin:8px 0 4px; opacity:0.8; }
+    .builder-panel input[type="file"] { width:100%; }
+    .builder-panel select, .builder-panel textarea, .builder-panel input[type="text"] {
+      width:100%; background:#05060f; border-radius:8px; border:1px solid #252b3f; color:#fff; padding:8px 10px; font-size:0.85rem;
+    }
+    .builder-panel textarea { min-height:120px; resize:vertical; }
+    .builder-btn {
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:8px 14px; border-radius:999px; border:1px solid #4b5cff;
+      background:#11152a; color:#fff; font-size:0.8rem; text-transform:uppercase;
+      letter-spacing:0.08em; cursor:pointer; margin-top:10px;
+    }
+    .builder-btn--primary { background:#4b5cff; }
+    .builder-btn + .builder-btn { margin-left:8px; }
+
+    .preview-wrap { display:flex; flex-direction:column; gap:12px; }
+    .preview-toolbar { display:flex; justify-content:space-between; align-items:center; }
+    .preview-pages { display:flex; flex-wrap:wrap; gap:12px; }
+    .preview-page {
+      width:180px; height:260px; background:#05060f; border-radius:10px;
+      border:1px solid #252b3f; overflow:hidden; position:relative; cursor:pointer;
+      display:flex; align-items:center; justify-content:center; font-size:0.7rem; color:#888;
+    }
+    .preview-page canvas { width:100%; height:100%; display:block; }
+    .preview-page span { position:absolute; bottom:6px; right:8px; font-size:0.65rem; opacity:0.7; }
+
+    .thumbs { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+    .thumbs img { width:60px; height:60px; object-fit:cover; border-radius:6px; border:1px solid #252b3f; }
+
+    .field-row { display:flex; gap:8px; margin-top:8px; }
+    .field-row select { flex:1; }
+  </style>
+  <script defer src="/builder/js/builder.js"></script>
+</head>
+<body>
+  <div class="builder-root">
+    <header class="builder-header">
+      <div>
+        <div class="builder-title">Boardwalk Comic Builder</div>
+        <div style="font-size:0.85rem; opacity:0.8;">Upload images, choose style, write your story, generate a 10-page comic PDF.</div>
+      </div>
+      <a href="/index.html" style="font-size:0.8rem; text-transform:uppercase; letter-spacing:0.08em; opacity:0.8;">← Back to Universe</a>
+    </header>
+
+    <div class="builder-layout">
+      <section class="builder-panel">
+        <h2>1. Images</h2>
+        <label for="imageInput">Upload images (JPG/PNG)</label>
+        <input id="imageInput" type="file" accept="image/*" multiple />
+
+        <div class="thumbs" id="imageThumbs"></div>
+
+        <h2 style="margin-top:16px;">2. Style</h2>
+        <label for="styleSelect">Comic Style</label>
+        <select id="styleSelect">
+          <option value="halftone">Halftone</option>
+          <option value="manga">Manga</option>
+          <option value="noir">Noir</option>
+          <option value="cartoon">Cartoon</option>
+        </select>
+
+        <label for="layoutSelect" style="margin-top:8px;">Layout</label>
+        <select id="layoutSelect">
+          <option value="grid-3">3 Panel Grid</option>
+          <option value="grid-6">6 Panel Grid</option>
+          <option value="cinematic">Cinematic</option>
+        </select>
+
+        <label for="fontSelect" style="margin-top:8px;">Font</label>
+        <select id="fontSelect">
+          <option value="ComicSans">ComicSans</option>
+          <option value="Impact">Impact</option>
+          <option value="Serif">Serif</option>
+          <option value="Sans">Sans</option>
+        </select>
+
+        <label for="bubbleSelect" style="margin-top:8px;">Bubble Style</label>
+        <select id="bubbleSelect">
+          <option value="round">Round</option>
+          <option value="shout">Shout</option>
+          <option value="narration">Narration</option>
+        </select>
+
+        <h2 style="margin-top:16px;">3. Story</h2>
+        <label for="storyMode">Story Mode</label>
+        <select id="storyMode">
+          <option value="single">Single Script (auto-split)</option>
+          <option value="per-page">Per Page</option>
+        </select>
+
+        <div id="storySingleWrap" style="margin-top:8px;">
+          <label for="storyInput">Story Script</label>
+          <textarea id="storyInput" placeholder="Write your story here..."></textarea>
+        </div>
+
+        <div id="storyPagesWrap" style="margin-top:8px; display:none;">
+          <label>Per Page Text</label>
+          <textarea id="storyPage1" placeholder="Page 1 text"></textarea>
+          <textarea id="storyPage2" placeholder="Page 2 text"></textarea>
+          <textarea id="storyPage3" placeholder="Page 3 text"></textarea>
+          <textarea id="storyPage4" placeholder="Page 4 text"></textarea>
+          <textarea id="storyPage5" placeholder="Page 5 text"></textarea>
+          <textarea id="storyPage6" placeholder="Page 6 text"></textarea>
+          <textarea id="storyPage7" placeholder="Page 7 text"></textarea>
+          <textarea id="storyPage8" placeholder="Page 8 text"></textarea>
+          <textarea id="storyPage9" placeholder="Page 9 text"></textarea>
+          <textarea id="storyPage10" placeholder="Page 10 text"></textarea>
+        </div>
+
+        <button id="generateBtn" class="builder-btn builder-btn--primary">Generate Comic</button>
+      </section>
+
+      <section class="builder-panel">
+        <h2>4. Preview & Export</h2>
+        <div class="preview-wrap">
+          <div class="preview-toolbar">
+            <div style="font-size:0.8rem; opacity:0.8;">Pages (10 max)</div>
+            <div>
+              <button id="regenPageBtn" class="builder-btn">Regenerate Page</button>
+              <button id="downloadBtn" class="builder-btn builder-btn--primary">Download PDF</button>
+            </div>
+          </div>
+          <div class="preview-pages" id="previewPages"></div>
+        </div>
+      </section>
+    </div>
+  </div>
+</body>
+</html>
