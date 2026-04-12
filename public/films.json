@@ -1,0 +1,18 @@
+{
+  "films": [
+    {
+      "id": "gold-lake-film",
+      "title": "Gold Lake – Short Film",
+      "description": "A cinematic short set in the Boardwalk Universe.",
+      "coverClass": "gold-lake-cover",
+      "video": "gold-lake-film.mp4"
+    },
+    {
+      "id": "civil-war-film",
+      "title": "New Civil War – Short Film",
+      "description": "A dramatic short film adaptation.",
+      "coverClass": "civil-war-cover",
+      "video": "civil-war-film.mp4"
+    }
+  ]
+}
