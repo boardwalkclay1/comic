@@ -18,18 +18,26 @@ document.addEventListener("DOMContentLoaded", () => {
   // =========================
   // GET COMIC ID FROM URL
   // =========================
-  const comicID = new URLSearchParams(window.location.search).get("id");
-  if (!comicID) throw new Error("Missing ?id=");
-  if (!COMICS[comicID]) throw new Error("Unknown comic id: " + comicID);
+  let comicID = new URLSearchParams(window.location.search).get("id");
 
-  const pdfFiles = COMICS[comicID]; // just filenames
+  if (!comicID) {
+    return showError("Missing ?id= in URL");
+  }
+
+  // normalize ID
+  comicID = comicID.trim().toLowerCase();
+
+  if (!COMICS[comicID]) {
+    return showError("Unknown comic id: " + comicID);
+  }
+
+  const pdfFiles = COMICS[comicID];
 
   // =========================
   // PDF.js SETUP
   // =========================
   if (!window.pdfjsLib) {
-    console.error("pdfjsLib not found");
-    return;
+    return showError("PDF.js library not found");
   }
 
   pdfjsLib.GlobalWorkerOptions.workerSrc =
@@ -38,8 +46,8 @@ document.addEventListener("DOMContentLoaded", () => {
   // =========================
   // STATE
   // =========================
-  let pdfDocs = [];   // loaded PDF objects
-  let pageMap = [];   // [{ pdfIndex, page }]
+  let pdfDocs = [];
+  let pageMap = [];
   let totalPages = 0;
 
   let currentPage = 1;
@@ -64,11 +72,22 @@ document.addEventListener("DOMContentLoaded", () => {
   const turnCtxs = turnLayers.map(c => c.getContext("2d"));
 
   // =========================
-  // LOAD ALL PDFs FROM assets/books/
+  // ERROR DISPLAY
+  // =========================
+  function showError(msg) {
+    document.body.innerHTML = `
+      <div style="padding:40px; font-size:20px; color:red;">
+        ${msg}
+      </div>
+    `;
+  }
+
+  // =========================
+  // LOAD ALL PDFs (FIXED PATH)
   // =========================
   async function loadAllPDFs() {
     for (let i = 0; i < pdfFiles.length; i++) {
-      const url = `assets/books/${pdfFiles[i]}`;
+      const url = `/assets/${pdfFiles[i]}`; // FIXED PATH
       const pdf = await pdfjsLib.getDocument(url).promise;
       pdfDocs.push(pdf);
 
@@ -148,7 +167,7 @@ document.addEventListener("DOMContentLoaded", () => {
     pageA.style.zIndex = 2;
     pageB.style.zIndex = 1;
   }).catch(err => {
-    console.error("Error loading PDFs:", err);
+    showError("Error loading PDFs: " + err.message);
   });
 
   // =========================
