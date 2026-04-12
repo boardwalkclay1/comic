@@ -1,4 +1,3 @@
-<script>
 window.addEventListener("DOMContentLoaded", () => {
   const pages = Array.from(document.querySelectorAll(".page"));
   const galaxy = document.getElementById("comicGalaxy");
@@ -26,7 +25,6 @@ window.addEventListener("DOMContentLoaded", () => {
     if (index <= pages.length) {
       setTimeout(showNextPage, 260);
     } else {
-      // After final burn, spawn galaxy
       setTimeout(() => {
         pages.forEach(p => p.classList.remove("page--burn"));
         spawnGalaxyPages();
@@ -45,15 +43,12 @@ window.addEventListener("DOMContentLoaded", () => {
       g.className = "comic-galaxy-page";
       g.style.backgroundImage = p.style.backgroundImage;
 
-      // Random starting position
       g.style.left = Math.random() * 80 + "vw";
       g.style.top = Math.random() * 60 + "vh";
 
-      // Staggered animation
       g.style.animationDelay = (i * 2) + "s";
 
       galaxy.appendChild(g);
     });
   }
 });
-</script>
