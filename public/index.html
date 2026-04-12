@@ -5,6 +5,10 @@
   <title>Boardwalk Comic Universe</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+  <link rel="stylesheet" href="/assets/styles.css" />
+  <script defer src="/js/theme.js"></script>
+  <script defer src="/js/intro.js"></script>
+
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body, html { width: 100%; height: 100%; overflow: hidden; background: #05060a; color: #fff; }
@@ -12,7 +16,6 @@
     .intro-root { position: relative; width: 100%; height: 100%; overflow: hidden; }
     .intro-bg { position: absolute; inset: 0; background: radial-gradient(circle at center, #1b2140 0%, #05060a 60%, #000 100%); z-index: 0; }
 
-    /* GALAXY */
     .comic-galaxy { position: absolute; inset: 0; overflow: hidden; z-index: 0; pointer-events: none; }
     .comic-galaxy-page {
       position: absolute;
@@ -33,7 +36,6 @@
       100% { opacity: 0; transform: translateY(-40vh) translateX(25vw) rotate(18deg) scale(1.05); }
     }
 
-    /* PAGE FLIP STACK */
     .page-stack { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; perspective: 2600px; z-index: 1; }
     .page {
       position: absolute; width: 100vw; height: 100vh;
@@ -61,7 +63,6 @@
       100% { opacity: 0; filter: brightness(0.2) contrast(2) drop-shadow(0 0 100px rgba(0,0,0,1)); }
     }
 
-    /* TITLE + CTA */
     .intro-title-wrap {
       position: absolute; inset: 0;
       display: flex; flex-direction: column;
@@ -96,37 +97,35 @@
   <div class="intro-root">
     <div class="intro-bg"></div>
 
-    <!-- FLOATING GALAXY -->
     <div class="comic-galaxy" id="comicGalaxy"></div>
 
-    <!-- PAGE FLIP STACK -->
     <div class="page-stack" id="pageStack">
-      <div class="page" style="background-image:url('assets/pages/page-1.jpg')"></div>
-      <div class="page" style="background-image:url('assets/pages/page-2.jpg')"></div>
-      <div class="page" style="background-image:url('assets/pages/page-3.jpg')"></div>
-      <div class="page" style="background-image:url('assets/pages/page-4.jpg')"></div>
-      <div class="page" style="background-image:url('assets/pages/page-5.jpg')"></div>
-      <div class="page" style="background-image:url('assets/pages/page-6.jpg')"></div>
-      <div class="page" style="background-image:url('assets/pages/page-7.jpg')"></div>
-      <div class="page" style="background-image:url('assets/pages/page-8.jpg')"></div>
-      <div class="page" style="background-image:url('assets/pages/page-9.jpg')"></div>
-      <div class="page" style="background-image:url('assets/pages/page-10.jpg')"></div>
+      <div class="page" style="background-image:url('/assets/page-1.jpg')"></div>
+      <div class="page" style="background-image:url('/assets/page-2.jpg')"></div>
+      <div class="page" style="background-image:url('/assets/page-3.jpg')"></div>
+      <div class="page" style="background-image:url('/assets/page-4.jpg')"></div>
+      <div class="page" style="background-image:url('/assets/page-5.jpg')"></div>
+      <div class="page" style="background-image:url('/assets/page-6.jpg')"></div>
+      <div class="page" style="background-image:url('/assets/page-7.jpg')"></div>
+      <div class="page" style="background-image:url('/assets/page-8.jpg')"></div>
+      <div class="page" style="background-image:url('/assets/page-9.jpg')"></div>
+      <div class="page" style="background-image:url('/assets/page-10.jpg')"></div>
     </div>
 
-    <!-- TITLE -->
     <div class="intro-title-wrap">
       <div class="intro-kicker">WELCOME TO</div>
       <div class="intro-title">BOARDWALK COMIC UNIVERSE</div>
       <div class="intro-sub">A cinematic gateway into your world — where every frame hits like a panel.</div>
+
       <div class="intro-cta">
         <a href="library.html" class="intro-btn">Enter Library</a>
-        <a href="audio.html" class="intro-btn intro-btn--ghost">Audio Universe</a>
+        <a href="audio.html" class="intro-btn">Audio Universe</a>
+        <a href="short-films.html" class="intro-btn">Short Films</a>
+        <a href="builder.html" class="intro-btn">Boardwalk Comic Builder</a>
       </div>
     </div>
 
     <div class="intro-noise"></div>
   </div>
-
-  <!-- JS injected below -->
 </body>
 </html>
