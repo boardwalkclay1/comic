@@ -4,8 +4,11 @@
   <meta charset="UTF-8" />
   <title>Boardwalk Comic Universe – Library</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="/assets/styles.css" />
-  <script defer src="assets/theme.js"></script>
+
+  <!-- Library-specific CSS -->
+  <link rel="stylesheet" href="/assets/library.css" />
+
+  <script defer src="/assets/theme.js"></script>
 </head>
 
 <body>
@@ -26,10 +29,10 @@
       <h1 class="page-title">Library</h1>
       <p class="page-subtitle">Select a title to open the full comic or book.</p>
 
-      <section id="bookGrid" class="comic-grid">
+      <section class="comic-grid">
 
         <!-- New Civil War -->
-        <a class="comic-card" href="/assets/new-civil-war-1.pdf" target="_blank">
+        <a class="comic-card" href="/reader.html?id=new-civil-war">
           <div class="comic-card__cover">
             <img src="/assets/cw-cover.jpg" alt="New Civil War Cover" />
           </div>
@@ -40,13 +43,24 @@
         </a>
 
         <!-- Gold Lake -->
-        <a class="comic-card" href="/assets/gold-lake-1.pdf" target="_blank">
+        <a class="comic-card" href="/reader.html?id=gold-lake">
           <div class="comic-card__cover">
             <img src="/assets/gl-cover.jpg" alt="Gold Lake Cover" />
           </div>
           <div class="comic-card__meta">
             <h3>Gold Lake</h3>
             <p>Complete Comic</p>
+          </div>
+        </a>
+
+        <!-- Chapter Books -->
+        <a class="comic-card" href="/chapter-books.html">
+          <div class="comic-card__cover">
+            <img src="/assets/chapter-books-cover.jpg" alt="Chapter Books Cover" />
+          </div>
+          <div class="comic-card__meta">
+            <h3>Chapter Books</h3>
+            <p>Stories & Lore</p>
           </div>
         </a>
 
