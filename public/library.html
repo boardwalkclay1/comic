@@ -5,8 +5,26 @@
   <title>Boardwalk Comic Universe – Library</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Library-specific CSS -->
-  <link rel="stylesheet" href="/assets/css/library.css" />
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="/assets/favicon.png" />
+
+  <!-- Manifest -->
+  <link rel="manifest" href="/manifest.json" />
+
+  <!-- Social Preview -->
+  <meta property="og:title" content="Boardwalk Comic Universe – Library" />
+  <meta property="og:description" content="Explore the Boardwalk Comic Universe: comics, stories, and more." />
+  <meta property="og:image" content="/assets/library-preview.jpg" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://YOUR-DOMAIN/library.html" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Boardwalk Comic Universe – Library" />
+  <meta name="twitter:description" content="Explore the Boardwalk Comic Universe: comics, stories, and more." />
+  <meta name="twitter:image" content="/assets/library-preview.jpg" />
+
+  <!-- Library CSS -->
+  <link rel="stylesheet" href="/assets/library.css" />
 
   <script defer src="/assets/theme.js"></script>
 </head>
@@ -29,6 +47,7 @@
       <h1 class="page-title">Library</h1>
       <p class="page-subtitle">Select a title to open the full comic or book.</p>
 
+      <!-- COMIC GRID -->
       <section class="comic-grid">
 
         <!-- New Civil War -->
@@ -53,18 +72,13 @@
           </div>
         </a>
 
-        <!-- Chapter Books -->
-        <a class="comic-card" href="/chapter-books.html">
-          <div class="comic-card__cover">
-            <img src="/assets/chapter-books-cover.jpg" alt="Chapter Books Cover" />
-          </div>
-          <div class="comic-card__meta">
-            <h3>Chapter Books</h3>
-            <p>Stories & Lore</p>
-          </div>
-        </a>
-
       </section>
+
+      <!-- SIMPLE CHAPTER BOOKS LINK -->
+      <div class="chapter-books-link">
+        <a href="/chapter-books.html">📘 View Chapter Books</a>
+      </div>
+
     </main>
 
   </div>
