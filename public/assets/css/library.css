@@ -1,51 +1,96 @@
-/* Library Page Layout */
+/* ============================================
+   LIBRARY PAGE — MATCH GLOBAL COMIC THEME
+============================================ */
+
+/* Page layout */
 .page--library {
-  padding: 20px;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-/* Grid */
+/* Title + subtitle */
+.page-title {
+  font-size: 2.4rem;
+  margin-bottom: 0.5rem;
+  color: var(--c-yellow);
+}
+
+.page-subtitle {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  margin-bottom: 2rem;
+}
+
+/* ============================================
+   COMIC GRID
+============================================ */
 .comic-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 28px;
-  margin-top: 30px;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 2rem;
 }
 
-/* Card */
+/* Comic card */
 .comic-card {
-  background: var(--card-bg, #111);
-  border-radius: 12px;
-  padding: 12px;
+  background: var(--c-panel-bg);
+  border: 4px solid var(--c-panel-border);
+  box-shadow: var(--c-panel-shadow);
+  border-radius: var(--radius-md);
+  padding: 1rem;
   text-decoration: none;
   color: inherit;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-  transition: transform 0.2s ease;
+  transition: transform 0.15s ease;
 }
 
 .comic-card:hover {
-  transform: scale(1.03);
+  transform: scale(1.05);
 }
 
-/* Cover Image */
+/* Cover image */
 .comic-card__cover img {
   width: 100%;
-  height: 300px;        /* FIXED SIZE */
-  object-fit: cover;    /* Prevents stretching */
-  border-radius: 8px;
-  display: block;
+  height: 300px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  border: 3px solid var(--c-black);
+  box-shadow: 4px 4px 0 var(--c-black);
 }
 
-/* Meta */
+/* Meta text */
 .comic-card__meta {
-  margin-top: 12px;
+  margin-top: 0.8rem;
 }
 
 .comic-card__meta h3 {
   margin: 0;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
+  color: var(--c-black);
 }
 
 .comic-card__meta p {
-  margin: 4px 0 0;
-  opacity: 0.7;
+  margin: 0.3rem 0 0;
+  opacity: 0.8;
+  color: var(--c-black);
+}
+
+/* ============================================
+   CHAPTER BOOKS LINK
+============================================ */
+.chapter-books-link {
+  margin-top: 3rem;
+  text-align: center;
+}
+
+.chapter-books-link a {
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: var(--c-blue);
+  text-decoration: none;
+  border-bottom: 3px solid transparent;
+  transition: 0.15s ease;
+}
+
+.chapter-books-link a:hover {
+  border-bottom: 3px solid var(--c-red);
 }
