@@ -1,0 +1,23 @@
+{
+  "name": "Boardwalk Comic Universe",
+  "short_name": "BCU",
+  "description": "A universe of comics, chapter books, audio stories, and interactive readers.",
+  "start_url": "/library.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#000000",
+  "theme_color": "#4dabff",
+  "icons": [
+    {
+      "src": "/assets/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
