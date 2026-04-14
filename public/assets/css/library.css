@@ -2,7 +2,6 @@
    LIBRARY PAGE — MATCH GLOBAL COMIC THEME
 ============================================ */
 
-/* Page layout */
 .page--library {
   padding: 2rem;
   max-width: 1200px;
@@ -27,7 +26,7 @@
 ============================================ */
 .comic-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 2rem;
 }
 
@@ -47,14 +46,14 @@
   transform: scale(1.05);
 }
 
-/* Cover image */
+/* FULL COVER IMAGE — NO CROPPING */
 .comic-card__cover img {
   width: 100%;
-  height: 300px;
-  object-fit: cover;
+  height: auto;              /* FULL IMAGE */
   border-radius: var(--radius-sm);
   border: 3px solid var(--c-black);
   box-shadow: 4px 4px 0 var(--c-black);
+  display: block;
 }
 
 /* Meta text */
