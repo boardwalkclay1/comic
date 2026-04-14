@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="hero">
+<head>
+  <meta charset="UTF-8" />
+  <title>Chapter Books – Boardwalk Universe</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="/assets/favicon.png" />
+
+  <!-- Manifest -->
+  <link rel="manifest" href="/manifest.json" />
+
+  <!-- Social Preview -->
+  <meta property="og:title" content="Boardwalk Chapter Books" />
+  <meta property="og:description" content="Dive into the lore, stories, and written universe of Boardwalk." />
+  <meta property="og:image" content="/assets/library-preview.jpg" />
+  <meta property="og:type" content="website" />
+
+  <!-- Page CSS -->
+  <link rel="stylesheet" href="/assets/chapter-books.css" />
+
+  <script defer src="/assets/theme.js"></script>
+</head>
+
+<body>
+  <div id="theme-root" class="app">
+
+    <!-- FLASH INTRO -->
+    <div class="chapter-flash" id="chapterFlash">
+      <div class="flash-panel">CHAPTER BOOKS</div>
+      <div class="flash-panel">BOARDWALK UNIVERSE</div>
+      <div class="flash-panel">LORE • STORIES • HISTORY</div>
+    </div>
+
+    <!-- HEADER -->
+    <header class="top-bar">
+      <a href="index.html" class="logo-small">BOARDWALK COMIC UNIVERSE</a>
+      <nav class="nav-links">
+        <a href="library.html">Library</a>
+        <a href="chapter-books.html" class="active">Chapter Books</a>
+        <a href="audio.html">Audio</a>
+      </nav>
+      <button id="themeToggle" class="theme-toggle">Hero / Villain</button>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="chapter-page">
+      <h1 class="chapter-title">Chapter Books</h1>
+      <p class="chapter-subtitle">Select a story to open the full text.</p>
+
+      <section class="chapter-list">
+
+        <!-- Example Chapter Book -->
+        <a class="chapter-item" href="/assets/chapter/book-1.html">
+          <h2>The Midnight Divide</h2>
+          <p>Book 1 • Dark origins, hidden powers, and the first fracture in the Boardwalk timeline.</p>
+        </a>
+
+        <a class="chapter-item" href="/assets/chapter/book-2.html">
+          <h2>Shadows of Gold Lake</h2>
+          <p>Book 2 • The unseen war beneath the surface of Gold Lake.</p>
+        </a>
+
+        <a class="chapter-item" href="/assets/chapter/book-3.html">
+          <h2>The Civil Dawn</h2>
+          <p>Book 3 • Before the New Civil War, there was the Dawn.</p>
+        </a>
+
+      </section>
+    </main>
+
+  </div>
+
+  <script>
+    // Flash intro animation
+    window.addEventListener("DOMContentLoaded", () => {
+      const flash = document.getElementById("chapterFlash");
+      setTimeout(() => flash.classList.add("hide"), 1800);
+    });
+  </script>
+
+</body>
+</html>
