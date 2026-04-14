@@ -1,0 +1,120 @@
+/* ============================================
+   COLOR PALETTE — MIDNIGHT GREEN / PURPLE / ORANGE
+============================================ */
+:root {
+  --cb-midnight: #002b29;
+  --cb-purple: #3b1f4a;
+  --cb-orange: #d46a1f;
+  --cb-text: #e8e8e8;
+  --cb-panel: #0d0d0d;
+}
+
+/* ============================================
+   PAGE BACKGROUND
+============================================ */
+body {
+  background: linear-gradient(135deg, var(--cb-midnight), var(--cb-purple));
+  color: var(--cb-text);
+  margin: 0;
+  padding: 0;
+  font-family: "Bangers", sans-serif;
+}
+
+/* ============================================
+   FLASH INTRO
+============================================ */
+.chapter-flash {
+  position: fixed;
+  inset: 0;
+  background: black;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: flashFade 1.8s ease forwards;
+}
+
+.flash-panel {
+  font-size: 2.4rem;
+  color: var(--cb-orange);
+  margin: 0.3rem 0;
+  opacity: 0;
+  animation: flashText 0.8s ease forwards;
+}
+
+.flash-panel:nth-child(2) { animation-delay: 0.2s; }
+.flash-panel:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes flashText {
+  0% { opacity: 0; transform: scale(0.8); }
+  40% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0.6; }
+}
+
+@keyframes flashFade {
+  0% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; visibility: hidden; }
+}
+
+.chapter-flash.hide {
+  display: none;
+}
+
+/* ============================================
+   TITLES
+============================================ */
+.chapter-page {
+  padding: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.chapter-title {
+  font-size: 3rem;
+  color: var(--cb-orange);
+  margin-bottom: 0.5rem;
+}
+
+.chapter-subtitle {
+  font-size: 1.2rem;
+  opacity: 0.8;
+  margin-bottom: 2rem;
+}
+
+/* ============================================
+   CHAPTER LIST
+============================================ */
+.chapter-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.chapter-item {
+  background: var(--cb-panel);
+  border-left: 6px solid var(--cb-orange);
+  padding: 1.2rem 1.4rem;
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--cb-text);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.chapter-item:hover {
+  transform: translateX(6px);
+  background: #1a1a1a;
+}
+
+.chapter-item h2 {
+  margin: 0;
+  font-size: 1.8rem;
+  color: var(--cb-orange);
+}
+
+.chapter-item p {
+  margin: 0.4rem 0 0;
+  opacity: 0.85;
+}
