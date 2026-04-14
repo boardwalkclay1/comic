@@ -30,28 +30,18 @@ document.addEventListener("DOMContentLoaded", () => {
   // =========================
   let comicID = new URLSearchParams(window.location.search).get("id");
 
-  if (!comicID) {
-    return showError("Missing ?id= in URL");
-  }
+  if (!comicID) return showError("Missing ?id= in URL");
 
-  // normalize ID: trim, lowercase, strip trailing -number
-  comicID = comicID
-    .trim()
-    .toLowerCase()
-    .replace(/-\d+$/, ""); // gold-lake-2 → gold-lake
+  comicID = comicID.trim().toLowerCase().replace(/-\d+$/, "");
 
-  if (!COMICS[comicID]) {
-    return showError("Unknown comic id: " + comicID);
-  }
+  if (!COMICS[comicID]) return showError("Unknown comic id: " + comicID);
 
   const pdfFiles = COMICS[comicID];
 
   // =========================
   // PDF.js SETUP
   // =========================
-  if (!window.pdfjsLib) {
-    return showError("PDF.js library not found");
-  }
+  if (!window.pdfjsLib) return showError("PDF.js library not found");
 
   pdfjsLib.GlobalWorkerOptions.workerSrc =
     "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
@@ -85,11 +75,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const turnCtxs = turnLayers.map(c => c.getContext("2d"));
 
   // =========================
-  // LOAD ALL PDFs  (/assets/*.pdf)
+  // LOAD ALL PDFs (Cloudflare root = /public)
   // =========================
   async function loadAllPDFs() {
     for (let i = 0; i < pdfFiles.length; i++) {
-      const url = `/assets/${pdfFiles[i]}`;
+      const url = `/assets/${pdfFiles[i]}`; // Cloudflare serves /public as root
       const pdf = await pdfjsLib.getDocument(url).promise;
       pdfDocs.push(pdf);
 
@@ -101,7 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // =========================
-  // RENDER PAGE
+  // RENDER PAGE (FULL SCREEN)
   // =========================
   async function renderPage(globalPageNum, canvas, ctx) {
     if (globalPageNum < 1 || globalPageNum > totalPages) return false;
@@ -110,7 +100,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const pdf = pdfDocs[info.pdfIndex];
     const page = await pdf.getPage(info.page);
 
-    const viewport = page.getViewport({ scale: 1.5 });
+    // Get natural PDF size
+    const unscaled = page.getViewport({ scale: 1 });
+
+    // Scale to fit screen
+    const scale = Math.min(
+      window.innerWidth / unscaled.width,
+      window.innerHeight / unscaled.height
+    );
+
+    const viewport = page.getViewport({ scale });
+
     canvas.width = viewport.width;
     canvas.height = viewport.height;
 
