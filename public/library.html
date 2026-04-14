@@ -5,28 +5,16 @@
   <title>Boardwalk Comic Universe – Library</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Favicon -->
   <link rel="icon" type="image/png" href="/assets/favicon.png" />
-
-  <!-- Manifest -->
   <link rel="manifest" href="/manifest.json" />
 
   <!-- Social Preview -->
   <meta property="og:title" content="Boardwalk Comic Universe – Library" />
   <meta property="og:description" content="Explore the Boardwalk Comic Universe: comics, stories, and more." />
   <meta property="og:image" content="/assets/library-preview.jpg" />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://YOUR-DOMAIN/library.html" />
 
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Boardwalk Comic Universe – Library" />
-  <meta name="twitter:description" content="Explore the Boardwalk Comic Universe: comics, stories, and more." />
-  <meta name="twitter:image" content="/assets/library-preview.jpg" />
-
-  <!-- GLOBAL THEME CSS -->
+  <!-- GLOBAL + LIBRARY CSS -->
   <link rel="stylesheet" href="/assets/css/styles.css" />
-
-  <!-- LIBRARY PAGE CSS -->
   <link rel="stylesheet" href="/assets/css/library.css" />
 
   <script defer src="/assets/theme.js"></script>
@@ -35,7 +23,6 @@
 <body>
   <div id="theme-root" class="app">
 
-    <!-- HEADER -->
     <header class="top-bar">
       <a href="index.html" class="logo-small">BOARDWALK COMIC UNIVERSE</a>
       <nav class="nav-links">
@@ -45,12 +32,10 @@
       <button id="themeToggle" class="theme-toggle">Hero / Villain</button>
     </header>
 
-    <!-- MAIN CONTENT -->
     <main class="page page--library">
       <h1 class="page-title">Library</h1>
       <p class="page-subtitle">Select a title to open the full comic or book.</p>
 
-      <!-- COMIC GRID -->
       <section class="comic-grid">
 
         <!-- New Civil War -->
@@ -60,7 +45,9 @@
           </div>
           <div class="comic-card__meta">
             <h3>New Civil War</h3>
-            <p>Complete Comic</p>
+            <p class="desc">
+              A modern-day dictator initiates World War III and sparks a new American civil war.
+            </p>
           </div>
         </a>
 
@@ -71,13 +58,14 @@
           </div>
           <div class="comic-card__meta">
             <h3>Gold Lake</h3>
-            <p>Complete Comic</p>
+            <p class="desc">
+              A boy discovers a lake full of gold and riches, but no one in his impoverished town believes him.
+            </p>
           </div>
         </a>
 
       </section>
 
-      <!-- CHAPTER BOOKS LINK -->
       <div class="chapter-books-link">
         <a href="/chapter-books.html">📘 View Chapter Books</a>
       </div>
