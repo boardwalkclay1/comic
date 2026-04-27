@@ -77,6 +77,29 @@ h1, h2, h3, h4 {
 }
 
 /* ============================================
+   BLUE SCROLLBAR (GLOBAL)
+============================================ */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.25);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--c-blue);
+  border-radius: 10px;
+  border: 2px solid var(--c-black);
+  box-shadow: 0 0 10px var(--c-blue);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2f8fe8;
+}
+
+/* ============================================
    COMIC PANEL SYSTEM
 ============================================ */
 .panel {
